@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LINTAS - Layanan Inventaris & Sistem Tata Aset | Dishub DKI Jakarta</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        /* Smooth scroll */
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        /* Custom gradient backgrounds */
+        .bg-gradient-primary {
+            background: linear-gradient(135deg, #0B2A4A 0%, #1a4a7a 100%);
+        }
+        
+        .btn-gradient {
+            background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-gradient:hover {
+            transform: scale(1.02);
+            box-shadow: 0 10px 20px -5px rgba(79, 70, 229, 0.4);
+        }
+        
+        /* Card hover effect */
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 25px -12px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Modal backdrop */
+        .modal-backdrop {
+            background-color: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+        }
+        
+        /* Slideshow */
+        .slideshow-container {
+            position: relative;
+            width: 100%;
+            min-height: 550px;
+            overflow: hidden;
+        }
+        
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        
+        .slide.active {
+            opacity: 1;
+        }
+        
+        .slide-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(11, 42, 74, 0.85) 0%, rgba(11, 42, 74, 0.7) 100%);
+        }
+        
+        /* Slide indicator dots */
+        .slide-dot {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .slide-dot.active {
+            background-color: #F4B400;
+            width: 24px;
+        }
+        
+        /* Running text marquee */
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        
+        .animate-marquee {
+            animation: marquee 25s linear infinite;
+        }
+        
+        /* Map styles */
+        #reportMap {
+            height: 300px;
+            width: 100%;
+            border-radius: 12px;
+            z-index: 1;
+        }
+        
+        .leaflet-container {
+            border-radius: 12px;
+            z-index: 1;
+        }
+        
+        .locate-btn {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: white;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+        }
+        
+        .locate-btn:hover {
+            background: #0B2A4A;
+            color: #F4B400;
+        }
+        
+        .marker-pin {
+            width: 24px;
+            height: 24px;
+            border-radius: 50% 50% 50% 0;
+            background: #0B2A4A;
+            position: absolute;
+            transform: rotate(-45deg);
+            left: 50%;
+            top: 50%;
+            margin: -24px 0 0 -12px;
+            border: 3px solid #F4B400;
+            box-shadow: 0 10px 15px rgba(0,0,0,0.4);
+        }
+        
+        /* Logo container styling */
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .logo-item {
+            height: 45px;
+            width: auto;
+            object-fit: contain;
+        }
+        
+        /* Small logo for badge */
+        .badge-logo {
+            height: 16px;
+            width: auto;
+            object-fit: contain;
+            display: inline-block;
+            vertical-align: middle;
+        }
+    </style>
+    
+    <!-- Leaflet CSS & JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
+<body class="bg-white">
+
+    <!-- ==================== LANDING PAGE ==================== -->
+    <div id="landingPage">
+        
+        <!-- NAVBAR dengan Logo DKI Jakarta dan Dishub DKI -->
+        <nav class="bg-gradient-primary text-white sticky top-0 z-50 shadow-xl">
+            <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+                <div class="flex items-center gap-4">
+                    <!-- Logo DKI Jakarta -->
+                    <div class="flex items-center gap-3 border-r border-white/20 pr-4">
+                        <img src="G:/Kerja/lintas-demo/image/logo_dki.png" alt="Pemerintah Provinsi DKI Jakarta" class="logo-item h-12 w-auto" onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                        <div class="hidden w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center text-xs font-bold">DKI</div>
+                        <img src="G:/Kerja/lintas-demo/image/logo_dishub_dki.png" alt="Dinas Perhubungan DKI Jakarta" class="logo-item h-12 w-auto" onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                        <div class="hidden w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center text-xs font-bold">DISHUB</div>
+                    </div>
+                    <div>
+                        <h1 class="font-black text-xl tracking-tight">LINTAS</h1>
+                        <p class="text-[10px] text-indigo-300 font-bold uppercase tracking-wider">DINAS PERHUBUNGAN DKI JAKARTA</p>
+                    </div>
+                </div>
+                <div class="flex gap-3">
+                    <button onclick="openLogin('seksi')" class="px-5 py-2.5 bg-white/10 hover:bg-white/20 rounded-xl font-bold text-xs uppercase tracking-wider transition-all">
+                        <i class="fas fa-user-check mr-2"></i> Seksi
+                    </button>
+                    <button onclick="openLogin('admin')" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 rounded-xl font-bold text-xs uppercase tracking-wider transition-all shadow-lg">
+                        <i class="fas fa-user-shield mr-2"></i> Super Admin
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- HERO SECTION dengan SLIDESHOW 4 GAMBAR LOKAL -->
+        <div class="slideshow-container relative" id="slideshowContainer">
+            <!-- Slide 1 -->
+            <div class="slide" id="slide1" style="background-image: url('image/kegiatan_dishub_dki1.png');">
+                <div class="slide-overlay"></div>
+            </div>
+            <!-- Slide 2 -->
+            <div class="slide" id="slide2" style="background-image: url('image/kegiatan_dishub_dki2.png');">
+                <div class="slide-overlay"></div>
+            </div>
+            <!-- Slide 3 -->
+            <div class="slide" id="slide3" style="background-image: url('image/kegiatan_dishub_dki3.png');">
+                <div class="slide-overlay"></div>
+            </div>
+            <!-- Slide 4 -->
+            <div class="slide" id="slide4" style="background-image: url('image/kegiatan_dishub_dki4.png');">
+                <div class="slide-overlay"></div>
+            </div>
+            
+            <!-- Konten Hero -->
+            <div class="absolute inset-0 z-10 flex flex-col items-center justify-center text-center px-6">
+                <div class="inline-flex items-center gap-2 px-4 py-2 bg-blue-500/20 backdrop-blur-md border border-blue-400/30 rounded-full mb-6">
+                    <span class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
+                    <span class="text-emerald-400 text-[10px] font-black uppercase tracking-widest">Sistem Informasi Terintegrasi</span>
+                </div>
+                <!-- Badge Instansi dengan LOGO, tanpa emoji -->
+                <div class="mb-4 flex justify-center gap-3 flex-wrap">
+                    <span class="px-4 py-1.5 bg-white/10 backdrop-blur-md rounded-full text-xs font-bold uppercase tracking-wider border border-white/20 flex items-center gap-1.5">
+                        <img src="G:/Kerja/lintas-demo/image/logo_dki.png" alt="DKI" class="badge-logo h-4 w-auto" onerror="this.style.display='none'">
+                        PEMERINTAH PROVINSI DKI JAKARTA
+                    </span>
+                    <span class="px-4 py-1.5 bg-[#F4B400]/20 backdrop-blur-md rounded-full text-xs font-bold uppercase tracking-wider border border-[#F4B400]/30 text-[#F4B400] flex items-center gap-1.5">
+                        <img src="G:/Kerja/lintas-demo/image/logo_dishub_dki.png" alt="DISHUB" class="badge-logo h-4 w-auto" onerror="this.style.display='none'">
+                        DINAS PERHUBUNGAN DKI JAKARTA
+                    </span>
+                </div>
+                <h1 class="text-white text-4xl md:text-6xl lg:text-7xl font-black uppercase tracking-tighter leading-none mb-6">
+                    Layanan Inventarisis &<br>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#F4B400] to-yellow-200">Sistem Tata Aset</span>
+                </h1>
+                <p class="text-white/80 text-base md:text-lg max-w-2xl mx-auto mb-6 leading-relaxed">
+                    Platform digital milik <span class="font-bold text-[#F4B400]">Dinas Perhubungan DKI Jakarta</span> untuk pengelolaan aset infrastruktur dan pelaporan kerusakan secara real-time.
+                </p>
+                <!-- Subteks kepemilikan aset yang lebih jelas untuk masyarakat awam -->
+                <p class="text-white/60 text-xs md:text-sm max-w-2xl mx-auto mb-8 leading-relaxed">
+                    <i class="fas fa-database mr-1"></i> Seluruh aset yang dikelola dalam sistem ini merupakan aset <strong class="text-white">Pemerintah Provinsi DKI Jakarta</strong> 
+                    yang berada di bawah pengawasan <strong class="text-white">Dinas Perhubungan DKI Jakarta</strong>.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <button onclick="openLaporan()" class="px-8 py-4 bg-[#F4B400] text-[#0B2A4A] rounded-xl font-black text-sm uppercase tracking-wider shadow-xl hover:bg-yellow-400 transition-all flex items-center justify-center gap-2">
+                        <i class="fas fa-exclamation-triangle"></i> Laporkan Kerusakan
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Indicator Dots -->
+            <div class="absolute bottom-6 left-0 right-0 z-20 flex justify-center gap-2">
+                <div class="w-2 h-2 rounded-full bg-white/50 slide-dot" data-slide="0" onclick="goToSlide(0)"></div>
+                <div class="w-2 h-2 rounded-full bg-white/50 slide-dot" data-slide="1" onclick="goToSlide(1)"></div>
+                <div class="w-2 h-2 rounded-full bg-white/50 slide-dot" data-slide="2" onclick="goToSlide(2)"></div>
+                <div class="w-2 h-2 rounded-full bg-white/50 slide-dot" data-slide="3" onclick="goToSlide(3)"></div>
+            </div>
+        </div>
+
+        <!-- LAYANAN KAMI -->
+        <section class="py-20 bg-slate-50">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <span class="text-indigo-600 text-xs font-black uppercase tracking-wider mb-2 block">Layanan Kami</span>
+                    <h2 class="text-3xl md:text-4xl font-black text-slate-900">Solusi Lengkap <span class="text-indigo-600">Pengelolaan Aset</span></h2>
+                    <p class="text-slate-500 mt-4 max-w-2xl mx-auto">Platform terpadu untuk masyarakat, petugas, dan administrator</p>
+                </div>
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div class="bg-white rounded-2xl p-8 shadow-lg card-hover text-center border border-slate-100">
+                        <div class="w-16 h-16 bg-indigo-100 rounded-2xl flex items-center justify-center mx-auto mb-5">
+                            <i class="fas fa-flag-checkered text-indigo-600 text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-black text-slate-800 mb-3">Laporan Masyarakat</h3>
+                        <p class="text-slate-500 text-sm leading-relaxed">Masyarakat dapat melaporkan kerusakan aset dengan mudah melalui formulir online dengan peta interaktif.</p>
+                    </div>
+                    <div class="bg-white rounded-2xl p-8 shadow-lg card-hover text-center border border-slate-100">
+                        <div class="w-16 h-16 bg-emerald-100 rounded-2xl flex items-center justify-center mx-auto mb-5">
+                            <i class="fas fa-hard-hat text-emerald-600 text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-black text-slate-800 mb-3">Petugas Lapangan</h3>
+                        <p class="text-slate-500 text-sm leading-relaxed">Seksi menerima tugas perbaikan dan update progress secara real-time.</p>
+                    </div>
+                    <div class="bg-white rounded-2xl p-8 shadow-lg card-hover text-center border border-slate-100">
+                        <div class="w-16 h-16 bg-amber-100 rounded-2xl flex items-center justify-center mx-auto mb-5">
+                            <i class="fas fa-chart-pie text-amber-600 text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-black text-slate-800 mb-3">Monitoring Aset</h3>
+                        <p class="text-slate-500 text-sm leading-relaxed">Dashboard interaktif dengan statistik kondisi aset secara real-time.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TENTANG KAMI -->
+        <section class="py-20 bg-white">
+            <div class="container mx-auto px-6">
+                <div class="grid md:grid-cols-2 gap-12 items-center">
+                    <div>
+                        <span class="text-indigo-600 text-xs font-black uppercase tracking-wider mb-2 block">Tentang Kami</span>
+                        <h2 class="text-3xl md:text-4xl font-black text-slate-900 mb-6">Dinas Perhubungan <span class="text-indigo-600">DKI Jakarta</span></h2>
+                        <p class="text-slate-600 leading-relaxed mb-6">
+                            LINTAS (Layanan Inventarisis & Sistem Tata Aset) adalah platform digital yang dikembangkan oleh 
+                            Dinas Perhubungan DKI Jakarta untuk mengelola seluruh aset infrastruktur secara terintegrasi.
+                        </p>
+                    </div>
+                    <div class="relative">
+                        <div class="bg-slate-100 rounded-3xl p-2 overflow-hidden">
+                            <img src="image/kegiatan_dishub_dki1.png" alt="Kegiatan Dishub" class="rounded-2xl w-full shadow-xl h-80 object-cover">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="bg-slate-900 text-slate-400 py-12 border-t border-slate-800">
+            <div class="container mx-auto px-6">
+                <div class="grid md:grid-cols-4 gap-8">
+                    <div>
+                        <div class="flex items-center gap-3 mb-4">
+                            <img src="G:/Kerja/lintas-demo/image/logo_dki.png" alt="DKI Jakarta" class="h-8 w-auto" onerror="this.style.display='none'">
+                            <img src="G:/Kerja/lintas-demo/image/logo_dishub_dki.png" alt="Dishub DKI" class="h-8 w-auto" onerror="this.style.display='none'">
+                            <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center"><span class="text-white font-black">L</span></div>
+                            <span class="font-black text-white text-lg">LINTAS</span>
+                        </div>
+                        <p class="text-sm leading-relaxed">Layanan Inventarisis & Sistem Tata Aset<br>Dinas Perhubungan DKI Jakarta</p>
+                    </div>
+                    <div>
+                        <h4 class="font-black text-white text-sm uppercase tracking-wider mb-4">Tentang Kami</h4>
+                        <ul class="space-y-2 text-sm">
+                            <li><a href="#" class="hover:text-white transition">Profil Dishub</a></li>
+                            <li><a href="#" class="hover:text-white transition">Visi & Misi</a></li>
+                            <li><a href="#" class="hover:text-white transition">Kontak Kami</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-black text-white text-sm uppercase tracking-wider mb-4">Layanan</h4>
+                        <ul class="space-y-2 text-sm">
+                            <li><a href="#" class="hover:text-white transition">Laporan Masyarakat</a></li>
+                            <li><a href="#" class="hover:text-white transition">Monitoring Aset</a></li>
+                            <li><a href="#" class="hover:text-white transition">Status Perbaikan</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-black text-white text-sm uppercase tracking-wider mb-4">Kontak</h4>
+                        <ul class="space-y-2 text-sm">
+                            <li><i class="fas fa-phone-alt mr-2 w-5"></i> (021) 12345678</li>
+                            <li><i class="fas fa-envelope mr-2 w-5"></i> lintas@dishub.jakarta.go.id</li>
+                            <li><i class="fas fa-map-marker-alt mr-2 w-5"></i> Jakarta Pusat, DKI Jakarta</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="border-t border-slate-800 mt-8 pt-8 text-center text-xs">
+                    <p>&copy; 2026 LINTAS - Dinas Perhubungan DKI Jakarta. Seluruh aset yang dikelola merupakan milik Pemerintah Provinsi DKI Jakarta.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- ==================== HALAMAN LAPORAN MASYARAKAT ==================== -->
+    <div id="laporanPage" style="display: none;" class="min-h-screen bg-[#0B2A4A] pb-20">
+        
+        <!-- Running Text -->
+        <div class="bg-[#F4B400] overflow-hidden py-2 shadow-lg sticky top-0 z-50">
+            <div class="whitespace-nowrap animate-marquee flex items-center gap-10">
+                <span class="text-[#0B2A4A] text-[10px] font-black uppercase tracking-widest inline-block">🏢 PUSAT PENGADUAN ASET DINAS PERHUBUNGAN DKI JAKARTA — LAPORKAN KERUSAKAN UNTUK PELAYANAN LEBIH BAIK</span>
+                <span class="text-[#0B2A4A] text-[10px] font-black uppercase tracking-widest inline-block">🏢 PUSAT PENGADUAN ASET DINAS PERHUBUNGAN DKI JAKARTA — LAPORKAN KERUSAKAN UNTUK PELAYANAN LEBIH BAIK</span>
+            </div>
+        </div>
+
+        <!-- Tombol Kembali -->
+        <button onclick="backToLanding()" class="fixed top-20 left-6 z-[100] bg-white/10 backdrop-blur-xl text-white p-3 rounded-2xl shadow-2xl border border-white/20 hover:bg-[#F4B400] hover:text-[#0B2A4A] transition-all duration-300">
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7" />
+            </svg>
+        </button>
+
+        <!-- Header Hero -->
+        <div class="relative h-[200px] flex flex-col items-center justify-center">
+            <div class="relative z-10 text-center px-6">
+                <div class="inline-flex items-center gap-2 px-4 py-2 bg-blue-500/20 backdrop-blur-md border border-blue-400/30 rounded-full mb-6">
+                    <span class="w-2 h-2 bg-[#F4B400] rounded-full animate-pulse"></span>
+                    <span class="text-[#F4B400] text-[10px] font-black uppercase tracking-widest">Layanan Publik Digital</span>
+                </div>
+                <h1 class="text-white text-4xl md:text-5xl font-black uppercase tracking-tighter leading-none mb-4">
+                    Sistem Pengaduan <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-[#F4B400] to-yellow-200">Asset Rusak</span>
+                </h1>
+                <p class="text-slate-300 text-sm max-w-lg mx-auto">
+                    Dinas Perhubungan DKI Jakarta melayani pelaporan kerusakan infrastruktur secara cepat dan transparan.
+                </p>
+            </div>
+        </div>
+
+        <!-- Form Laporan dengan Peta -->
+        <div class="max-w-2xl mx-auto px-4">
+            <div class="bg-white rounded-3xl shadow-2xl p-8 border-b-8 border-[#F4B400]">
+                
+                <!-- Informasi Pelapor -->
+                <div class="mb-8">
+                    <div class="flex items-center gap-4 mb-5">
+                        <div class="w-10 h-10 bg-[#0B2A4A] text-[#F4B400] rounded-xl flex items-center justify-center font-black">01</div>
+                        <div>
+                            <h3 class="font-black text-[#0B2A4A] uppercase text-sm">Informasi Pelapor</h3>
+                            <p class="text-[10px] text-slate-400 font-bold">Identitas Anda aman dalam sistem</p>
+                        </div>
+                    </div>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <input type="text" id="nama_pelapor" placeholder="Nama Lengkap" class="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 text-sm font-semibold focus:border-[#0B2A4A] outline-none">
+                        <input type="tel" id="kontak_pelapor" placeholder="Nomor WhatsApp" class="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 text-sm font-semibold focus:border-[#0B2A4A] outline-none">
+                    </div>
+                </div>
+
+                <!-- Detail Kerusakan -->
+                <div class="mb-8">
+                    <div class="flex items-center gap-4 mb-5">
+                        <div class="w-10 h-10 bg-[#0B2A4A] text-[#F4B400] rounded-xl flex items-center justify-center font-black">02</div>
+                        <div>
+                            <h3 class="font-black text-[#0B2A4A] uppercase text-sm">Detail Kerusakan</h3>
+                            <p class="text-[10px] text-slate-400 font-bold">Isi detail aset yang bermasalah</p>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <input type="text" id="judul_laporan" placeholder="Aset Yang Dilaporkan (Contoh: PJU Padam di Jl. Sudirman)" class="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 text-sm font-semibold focus:border-[#0B2A4A] outline-none">
+                        
+                        <select id="kondisi_aset" class="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 text-sm font-semibold outline-none">
+                            <option value="">Pilih Kategori Kondisi</option>
+                            <option value="Rusak">🚨 RUSAK</option>
+                            <option value="Hilang">🚫 HILANG / DICURI</option>
+                            <option value="Pindah Tempat">📍 PINDAH POSISI</option>
+                            <option value="Lainnya">📝 LAINNYA</option>
+                        </select>
+                        
+                        <textarea id="deskripsi" rows="3" placeholder="Deskripsi lengkap kerusakan..." class="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 text-sm font-semibold focus:border-[#0B2A4A] outline-none"></textarea>
+                        
+                        <!-- PETA LOKASI -->
+                        <div>
+                            <label class="text-[10px] font-black text-slate-500 uppercase ml-1 block mb-2">📍 Titik Lokasi Kerusakan (Klik pada peta)</label>
+                            <div class="relative rounded-xl overflow-hidden border">
+                                <div id="reportMap" class="w-full h-64 bg-slate-200"></div>
+                                <button type="button" onclick="getCurrentLocation()" class="locate-btn" title="Gunakan Lokasi Saya">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    </svg>
+                                </button>
+                            </div>
+                            <input type="hidden" id="lokasi_lat" value="-6.2088">
+                            <input type="hidden" id="lokasi_lng" value="106.8456">
+                            <div class="mt-3 p-3 bg-blue-50 rounded-xl border border-blue-100">
+                                <p class="text-xs font-semibold text-[#0B2A4A]" id="lokasi_display">📍 Klik pada peta untuk menentukan lokasi</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Upload Foto -->
+                        <div>
+                            <label class="text-[10px] font-black text-slate-500 uppercase ml-1">Bukti Foto (Opsional)</label>
+                            <div class="relative border-2 border-dashed border-slate-300 rounded-xl p-4 text-center hover:border-[#0B2A4A] cursor-pointer mt-1">
+                                <div class="text-2xl mb-1">📸</div>
+                                <p class="text-[10px] font-bold text-[#0B2A4A]">Klik untuk upload foto</p>
+                                <input type="file" id="foto_bukti" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer">
+                            </div>
+                            <div id="previewContainer" class="mt-3 hidden">
+                                <img id="previewImage" class="w-full h-40 object-cover rounded-xl border shadow">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <button onclick="submitLaporan()" id="submitBtn" class="w-full bg-[#0B2A4A] text-[#F4B400] py-4 rounded-xl font-black text-sm uppercase tracking-wider shadow-xl hover:bg-black transition-all">
+                    <i class="fas fa-paper-plane mr-2"></i> KIRIM LAPORAN RESMI
+                </button>
+                <div class="text-center mt-4">
+                    <p class="text-[9px] text-slate-400 font-black uppercase tracking-wider">Dishub DKI Jakarta • 2026</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL LOGIN ==================== -->
+    <div id="loginModal" class="fixed inset-0 z-[2000] flex items-center justify-center modal-backdrop" style="display: none;">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 mx-4">
+            <div class="text-center mb-4">
+                <div class="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <i class="fas fa-user-shield text-2xl text-indigo-600"></i>
+                </div>
+                <h3 class="text-xl font-black" id="modalTitle">Login Sebagai</h3>
+                <p class="text-slate-500 text-sm" id="modalRole">Super Admin</p>
+            </div>
+            <div class="flex gap-3">
+                <button onclick="closeLogin()" class="flex-1 py-2 bg-slate-100 rounded-xl font-bold">Batal</button>
+                <button onclick="doLogin()" class="flex-1 py-2 bg-indigo-600 text-white rounded-xl font-bold">Login</button>
+            </div>
+            <p class="text-center text-[9px] text-slate-400 mt-3">*Klik Login untuk masuk ke halaman dashboard</p>
+        </div>
+    </div>
+
+    <script>
+        // Slideshow variables
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const dots = document.querySelectorAll('.slide-dot');
+        let slideInterval;
+        
+        // Map variables
+        let reportMap, reportMarker;
+        let mapInitialized = false;
+        
+        // Global variables
+        let currentRole = null;
+        let selectedPhotoFile = null;
+        
+        // Initialize slideshow
+        function initSlideshow() {
+            if (slides.length > 0) {
+                slides[0].classList.add('active');
+                if (dots[0]) dots[0].classList.add('active');
+            }
+            startSlideInterval();
+        }
+        
+        function startSlideInterval() {
+            slideInterval = setInterval(() => {
+                let nextSlide = (currentSlide + 1) % slides.length;
+                goToSlide(nextSlide);
+            }, 4000);
+        }
+        
+        function goToSlide(index) {
+            slides[currentSlide].classList.remove('active');
+            if (dots[currentSlide]) dots[currentSlide].classList.remove('active');
+            
+            currentSlide = index;
+            
+            slides[currentSlide].classList.add('active');
+            if (dots[currentSlide]) dots[currentSlide].classList.add('active');
+        }
+        
+        // Initialize map
+        function initMap() {
+            if (mapInitialized) return;
+            const mapDiv = document.getElementById('reportMap');
+            if (!mapDiv) return;
+            
+            try {
+                reportMap = L.map('reportMap').setView([-6.2088, 106.8456], 15);
+                
+                L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; CartoDB',
+                    subdomains: 'abcd',
+                    maxZoom: 19
+                }).addTo(reportMap);
+                
+                const customIcon = L.divIcon({
+                    className: 'custom-marker',
+                    html: "<div class='marker-pin'></div>",
+                    iconSize: [30, 30],
+                    iconAnchor: [15, 30]
+                });
+                
+                reportMarker = L.marker([-6.2088, 106.8456], { draggable: true, icon: customIcon }).addTo(reportMap);
+                
+                reportMap.on('click', function(e) {
+                    updateLocation(e.latlng.lat, e.latlng.lng);
+                });
+                
+                reportMarker.on('dragend', function() {
+                    let pos = reportMarker.getLatLng();
+                    updateLocation(pos.lat, pos.lng);
+                });
+                
+                mapInitialized = true;
+                window.reportMap = reportMap;
+                window.reportMarker = reportMarker;
+            } catch (error) {
+                console.error("Map error:", error);
+            }
+        }
+        
+        function updateLocation(lat, lng) {
+            if (reportMarker) {
+                reportMarker.setLatLng([lat, lng]);
+            }
+            document.getElementById('lokasi_lat').value = lat;
+            document.getElementById('lokasi_lng').value = lng;
+            document.getElementById('lokasi_display').innerHTML = `📍 Lokasi: ${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+        }
+        
+        function getCurrentLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (pos) => {
+                        updateLocation(pos.coords.latitude, pos.coords.longitude);
+                        if (reportMap) reportMap.setView([pos.coords.latitude, pos.coords.longitude], 16);
+                    },
+                    (err) => {
+                        alert("⚠️ Gagal mengambil lokasi. Pastikan GPS aktif.");
+                    }
+                );
+            } else {
+                alert("⚠️ Browser tidak mendukung geolocation.");
+            }
+        }
+        
+        // Page navigation
+        function showLanding() {
+            document.getElementById('landingPage').style.display = 'block';
+            document.getElementById('laporanPage').style.display = 'none';
+        }
+        
+        function showLaporan() {
+            document.getElementById('landingPage').style.display = 'none';
+            document.getElementById('laporanPage').style.display = 'block';
+            
+            // Reset form
+            document.getElementById('nama_pelapor').value = '';
+            document.getElementById('kontak_pelapor').value = '';
+            document.getElementById('judul_laporan').value = '';
+            document.getElementById('kondisi_aset').value = '';
+            document.getElementById('deskripsi').value = '';
+            document.getElementById('previewContainer').classList.add('hidden');
+            selectedPhotoFile = null;
+            if (document.getElementById('foto_bukti')) document.getElementById('foto_bukti').value = '';
+            
+            // Reset location to default Jakarta
+            updateLocation(-6.2088, 106.8456);
+            if (reportMap) reportMap.setView([-6.2088, 106.8456], 15);
+            
+            setTimeout(() => {
+                if (!mapInitialized) initMap();
+            }, 200);
+        }
+        
+        function backToLanding() {
+            showLanding();
+        }
+        
+        function openLaporan() {
+            showLaporan();
+        }
+        
+        // Login functions
+        function openLogin(role) {
+            currentRole = role;
+            const modalTitle = document.getElementById('modalTitle');
+            const modalRole = document.getElementById('modalRole');
+            
+            if (role === 'seksi') {
+                modalTitle.innerText = 'Login Sebagai';
+                modalRole.innerText = 'Seksi Lapangan';
+            } else {
+                modalTitle.innerText = 'Login Sebagai';
+                modalRole.innerText = 'Super Admin';
+            }
+            
+            document.getElementById('loginModal').style.display = 'flex';
+        }
+        
+        function closeLogin() {
+            document.getElementById('loginModal').style.display = 'none';
+            currentRole = null;
+        }
+        
+        function doLogin() {
+            if (currentRole === 'seksi') {
+                window.location.href = 'seksi.html';
+            } else if (currentRole === 'admin') {
+                window.location.href = 'admin_bagian1.html';
+            }
+        }
+        
+        // Photo upload preview
+        const fotoInput = document.getElementById('foto_bukti');
+        if (fotoInput) {
+            fotoInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    selectedPhotoFile = file;
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        const previewContainer = document.getElementById('previewContainer');
+                        const previewImage = document.getElementById('previewImage');
+                        previewImage.src = event.target.result;
+                        previewContainer.classList.remove('hidden');
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+        
+        // Submit laporan
+        function submitLaporan() {
+            const nama = document.getElementById('nama_pelapor').value.trim();
+            const kontak = document.getElementById('kontak_pelapor').value.trim();
+            const judul = document.getElementById('judul_laporan').value.trim();
+            const kondisi = document.getElementById('kondisi_aset').value;
+            const deskripsi = document.getElementById('deskripsi').value.trim();
+            
+            if (!nama) {
+                alert('⚠️ Nama lengkap harus diisi!');
+                return;
+            }
+            if (!kontak) {
+                alert('⚠️ Nomor WhatsApp harus diisi!');
+                return;
+            }
+            if (!judul) {
+                alert('⚠️ Judul laporan harus diisi!');
+                return;
+            }
+            if (!kondisi) {
+                alert('⚠️ Pilih kategori kondisi aset!');
+                return;
+            }
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> MEMPROSES...';
+            submitBtn.disabled = true;
+            
+            setTimeout(() => {
+                const idLaporan = 'LP-' + new Date().getTime();
+                alert('✅ Laporan berhasil dikirim!\n\nTerima kasih, laporan Anda akan kami proses.\n\nID Laporan: ' + idLaporan);
+                
+                // Reset form
+                document.getElementById('nama_pelapor').value = '';
+                document.getElementById('kontak_pelapor').value = '';
+                document.getElementById('judul_laporan').value = '';
+                document.getElementById('kondisi_aset').value = '';
+                document.getElementById('deskripsi').value = '';
+                document.getElementById('previewContainer').classList.add('hidden');
+                selectedPhotoFile = null;
+                if (fotoInput) fotoInput.value = '';
+                
+                // Reset location
+                updateLocation(-6.2088, 106.8456);
+                if (reportMap) reportMap.setView([-6.2088, 106.8456], 15);
+                
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+                
+                showLanding();
+            }, 1500);
+        }
+        
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            initSlideshow();
+        });
+    </script>
+</body>
+</html>
