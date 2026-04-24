@@ -59,7 +59,7 @@
             prioritas: 'NORMAL',
             source: 'DISHUB',
             tgl_laporan: '23 APR 2026',
-            foto: 'https://images.unsplash.com/photo-1557597774-9d273605dfa9?q=80&w=500',
+            foto: 'image/lampu rusak.png',
             asset: { nama_aset: 'Penerangan Jalan Umum (PJU) - Lampu Jalan' },
             lokasi: 'CHANGIUNGO, BANDUNG BARAT, JAWA BARAT, JAWA BARAT, JAWA BARAT, JAWA BARAT, JAWABARAT, JAKARTA, INDONESIA',
             status: 'PROSES PERBAIKAN',
@@ -72,7 +72,7 @@
                 longitude: 107.6191,
                 category: 'PENERANGAN JALAN UMUM (PJU)',
                 jenis_aset: 'Lampu PJU 150 Watt',
-                foto: 'https://images.unsplash.com/photo-1551806235-a05bc13000ba?q=80&w=400'
+                foto: 'image/lampu rusak.png'
             }
         },
         {
@@ -81,7 +81,7 @@
             prioritas: 'URGENT',
             source: 'MASYARAKAT',
             tgl_laporan: '23 APR 2026',
-            foto: 'https://images.unsplash.com/photo-1557597774-9d273605dfa9?q=80&w=500',
+            foto: 'image/terminal_rusak.png',
             asset: { nama_aset: 'CCTV Lalu Lintas - Persimpangan' },
             lokasi: 'PHALLAHARI, JALAN CHALUWINDO, NGAMPIRAH, BANDUNG BARAT',
             status: 'PROSES PERBAIKAN',
@@ -94,7 +94,7 @@
                 longitude: 107.6012,
                 category: 'PENGAWASAN LALU LINTAS',
                 jenis_aset: 'CCTV 4K',
-                foto: 'https://plus.unsplash.com/premium_photo-1681910161249-65f7c18e0ef5?q=80&w=400'
+                foto: 'image/terminal_rusak.png'
             }
         }
     ],
@@ -104,40 +104,42 @@
         {
             id: 101,
             ticket_code: 'MNT-4KE2WINH',
-            asset: { nama_aset: 'ASET UMUM' },
-            jenis_aset: 'Penerangan Jalan',
+            asset: { nama_aset: 'Penerangan Jalan Umum (PJU) - Lampu Jalan' },
+            jenis_aset: 'Lampu PJU 150 Watt',
             location_address: 'Kantor Desa Ciwaruga, Jalan Ciwaruga, Bandung Barat',
             finished_at: '2026-04-23 10:30:00',
-            foto_kerusakan: 'https://images.unsplash.com/photo-1551806235-a05bc13000ba?q=80&w=400',
-            foto_perbaikan: 'https://images.unsplash.com/photo-1551806235-a05bc13000ba?q=80&w=400',
-            completion_notes: 'sudah diperbaiki dengan lampu baru dan koneksi kabel',
+            foto_kerusakan: 'image/lampu rusak.png',
+            foto_perbaikan: 'image/lampu rusak.png',
+            completion_notes: 'Lampu berhasil diganti baru, sistem kelistrikan normal kembali',
             status: 'SELESAI',
             report: {
-                description: 'Lampu jalan mati total dan kabel putus',
+                description: 'Lampu jalan mati total selama 3 hari',
                 category: 'PENERANGAN JALAN UMUM (PJU)',
                 location_address: 'Kantor Desa Ciwaruga, Jalan Ciwaruga, Bandung Barat',
-                foto: 'https://images.unsplash.com/photo-1551806235-a05bc13000ba?q=80&w=400'
+                foto: 'image/lampu rusak.png'
             },
-            deadline: '03 APR 2026'
+            deadline: '03 APR 2026',
+            prioritas: 'NORMAL'
         },
         {
             id: 102,
             ticket_code: 'MNT-ZSEXJXPB',
-            asset: { nama_aset: 'ASET UMUM' },
-            jenis_aset: 'CCTV',
+            asset: { nama_aset: 'CCTV Lalu Lintas - Persimpangan' },
+            jenis_aset: 'CCTV 4K',
             location_address: 'Cihanjuang, Bandung Barat, Jawa Barat',
             finished_at: '2026-04-22 14:20:00',
-            foto_kerusakan: 'https://plus.unsplash.com/premium_photo-1681910161249-65f7c18e0ef5?q=80&w=400',
-            foto_perbaikan: 'https://images.unsplash.com/photo-1551806235-a05bc13000ba?q=80&w=400',
-            completion_notes: 'sudah dibersihkan lensa dan ganti konektor RJ45',
+            foto_kerusakan: 'image/terminal_rusak.png',
+            foto_perbaikan: 'image/terminal_rusak.png',
+            completion_notes: 'Lensa dibersihkan, konektor RJ45 diganti baru, koneksi normal kembali',
             status: 'SELESAI',
             report: {
                 description: 'Lensa CCTV tertutup debu tebal dan koneksi sering terputus',
                 category: 'PENGAWASAN LALU LINTAS',
                 location_address: 'Cihanjuang, Bandung Barat, Jawa Barat',
-                foto: 'https://plus.unsplash.com/premium_photo-1681910161249-65f7c18e0ef5?q=80&w=400'
+                foto: 'image/terminal_rusak.png'
             },
-            deadline: '02 APR 2026'
+            deadline: '02 APR 2026',
+            prioritas: 'URGENT'
         }
     ],
     
@@ -153,6 +155,13 @@
         name: 'Reno Bastian',
         email: 'reno.bastian@dishub.jakarta.go.id',
         foto_preview: 'https://ui-avatars.com/api/?name=Reno+Bastian&background=0B2A4A&color=fff&size=128'
+    },
+    
+    // Fungsi Logout
+    logout() {
+        if(confirm('Apakah Anda yakin ingin keluar?')) {
+            window.location.href = 'index.html';
+        }
     },
     
     // Fungsi-fungsi
@@ -212,7 +221,8 @@
                 completion_notes: this.updateForm.completion_notes,
                 status: 'SELESAI',
                 report: completedTask.report,
-                deadline: completedTask.deadline
+                deadline: completedTask.deadline,
+                prioritas: completedTask.prioritas
             });
             this.tugasTersediaList.splice(index, 1);
         }
@@ -306,6 +316,12 @@
                     class="w-full flex items-center gap-4 px-4 py-3 rounded-xl font-bold text-xs uppercase tracking-widest transition-all duration-200">
                     <i class="fas fa-user-cog text-sm"></i> Pengaturan Akun
                 </button>
+                
+                <!-- Tombol Logout -->
+                <button @click="logout()" 
+                    class="w-full flex items-center gap-4 px-4 py-3 rounded-xl font-bold text-xs uppercase tracking-widest transition-all duration-200 text-red-400 hover:bg-red-500/20 hover:text-red-300 mt-4">
+                    <i class="fas fa-sign-out-alt text-sm"></i> Keluar
+                </button>
             </nav>
 
             <!-- User Info Bottom -->
@@ -340,7 +356,9 @@
                     <p class="text-[10px] font-black text-white uppercase tracking-widest">Reno Bastian</p>
                     <p class="text-[7px] font-bold text-slate-400 uppercase tracking-widest">Seksi</p>
                 </div>
-                <div class="w-9 h-9 bg-indigo-600 rounded-xl flex items-center justify-center font-black text-white text-sm">RB</div>
+                <button @click="logout()" class="w-9 h-9 bg-red-600 hover:bg-red-700 rounded-xl flex items-center justify-center font-black text-white text-sm transition-all" title="Keluar">
+                    <i class="fas fa-sign-out-alt text-xs"></i>
+                </button>
             </div>
         </nav>
 
@@ -360,8 +378,9 @@
                     <template x-for="(task, index) in tugasTersediaList" :key="task.id">
                         <div class="bg-white rounded-[2.5rem] overflow-hidden border border-slate-200 shadow-sm hover:shadow-2xl transition-all duration-500 group relative">
                             <!-- Gambar & Badge -->
-                            <div class="relative h-64 overflow-hidden">
-                                <img :src="task.foto" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                            <div class="relative h-64 overflow-hidden bg-gray-200">
+                                <img :src="task.foto" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
+                                     onerror="this.onerror=null; this.src='https://placehold.co/400x300/1e293b/475569?text=Gambar+Gagal+Load'">
                                 
                                 <div class="absolute top-6 left-6">
                                     <span class="px-5 py-2 bg-white/90 backdrop-blur-md text-indigo-600 rounded-full text-[10px] font-black uppercase tracking-[0.2em] shadow-sm" x-text="task.prioritas"></span>
@@ -469,6 +488,7 @@
                         <table class="w-full text-left border-collapse">
                             <thead>
                                 <tr class="bg-slate-800/50 border-b border-slate-700">
+                                    <th class="px-6 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">FOTO</th>
                                     <th class="px-6 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">INFO ASET</th>
                                     <th class="px-6 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">LOKASI</th>
                                     <th class="px-6 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">TANGGAL SELESAI</th>
@@ -480,8 +500,12 @@
                                 <template x-for="task in tugasSelesaiList" :key="task.id">
                                     <tr class="hover:bg-slate-800/50 transition-colors">
                                         <td class="px-6 py-5">
+                                            <div class="w-16 h-16 rounded-xl overflow-hidden bg-slate-800">
+                                                <img :src="task.foto_kerusakan" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='https://placehold.co/100x100/1e293b/475569?text=No+Image'">
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-5">
                                             <div class="flex items-center gap-4">
-                                                <div class="w-12 h-12 bg-slate-800 rounded-xl flex items-center justify-center text-xl">🏗️</div>
                                                 <div>
                                                     <div class="font-black text-white uppercase text-sm leading-none mb-1" x-text="task.asset.nama_aset"></div>
                                                     <div class="text-[10px] text-blue-400 font-black uppercase tracking-widest" x-text="task.ticket_code"></div>
@@ -489,7 +513,7 @@
                                             </div>
                                         </td>
                                         <td class="px-6 py-5">
-                                            <div class="text-xs font-bold text-slate-300 uppercase line-clamp-2 max-w-[250px]" x-text="task.location_address"></div>
+                                            <div class="text-xs font-bold text-slate-300 uppercase line-clamp-2 max-w-[200px]" x-text="task.location_address"></div>
                                         </td>
                                         <td class="px-6 py-5">
                                             <div class="text-xs font-black text-white uppercase" x-text="formatDate(task.finished_at)"></div>
@@ -509,7 +533,7 @@
                                     </tr>
                                 </template>
                                 <tr x-show="tugasSelesaiList.length === 0">
-                                    <td colspan="5" class="px-6 py-32 text-center">
+                                    <td colspan="6" class="px-6 py-32 text-center">
                                         <p class="text-slate-400 font-black uppercase text-xs tracking-[0.3em]">Belum ada riwayat tugas selesai.</p>
                                     </td>
                                 </tr>
@@ -526,9 +550,7 @@
                     <div class="max-w-5xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-6">
                         <div>
                             <nav class="flex mb-3 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
-                                <button @click="goBackToTersedia" class="hover:text-white transition-colors">Kembali</button>
-                                <span class="mx-3 text-slate-600">/</span>
-                                <span class="text-white">Detail Penugasan</span>
+                                <button @click="goBackToTersedia" class="hover:text-white transition-colors">← Kembali ke Tugas Tersedia</button>
                             </nav>
                             <h1 class="text-2xl font-black text-white uppercase tracking-tighter">
                                 Tiket #<span x-text="selectedTask ? selectedTask.ticket_code : ''"></span>
@@ -554,18 +576,23 @@
                                 <p class="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-6">Dokumentasi Laporan</p>
                                 
                                 <div class="space-y-4">
-                                    <!-- FOTO KERUSAKAN (sama dengan foto di halaman tugas tersedia) -->
+                                    <!-- FOTO KERUSAKAN (foto lama) -->
                                     <div>
-                                        <p class="text-[9px] font-black text-slate-400 uppercase mb-2">FOTO KERUSAKAN</p>
-                                        <div class="relative group">
-                                            <img :src="selectedTask ? (selectedTask.report.foto) : ''" class="w-full h-48 object-cover rounded-2xl border border-slate-700 shadow-lg">
+                                        <p class="text-[9px] font-black text-slate-400 uppercase mb-2">FOTO KERUSAKAN (SEBELUM)</p>
+                                        <div class="relative group bg-gray-800 rounded-2xl">
+                                            <img :src="selectedTask ? (selectedTask.report.foto) : ''" class="w-full h-48 object-cover rounded-2xl border border-slate-700 shadow-lg" 
+                                                 onerror="this.onerror=null; this.src='https://placehold.co/400x300/1e293b/475569?text=Foto+Gagal+Load'">
                                         </div>
                                     </div>
                                     
                                     <!-- PREVIEW FOTO HASIL (setelah upload) -->
                                     <div x-show="updateForm.foto_preview">
-                                        <p class="text-[9px] font-black text-emerald-400 uppercase mb-2">FOTO HASIL (PRAVIEW)</p>
+                                        <p class="text-[9px] font-black text-emerald-400 uppercase mb-2">FOTO HASIL (SETELAH) - PREVIEW</p>
                                         <img :src="updateForm.foto_preview" class="w-full h-48 object-cover rounded-2xl border border-emerald-500/50 shadow-lg">
+                                    </div>
+                                    <div x-show="!updateForm.foto_preview" class="border-2 border-dashed border-slate-600 rounded-2xl p-8 text-center">
+                                        <i class="fas fa-cloud-upload-alt text-4xl text-slate-500 mb-2 block"></i>
+                                        <p class="text-[9px] text-slate-400">Upload foto hasil perbaikan di form sebelah kanan</p>
                                     </div>
                                     
                                     <div class="p-4 bg-slate-800/50 rounded-2xl border border-slate-700">
@@ -636,14 +663,14 @@
                                         <div>
                                             <label class="block text-[10px] font-black text-slate-400 uppercase mb-2">Upload Foto Hasil (Sesudah)</label>
                                             <input type="file" accept="image/*" @change="handleFileUpload($event)" 
-                                                class="w-full text-xs text-slate-300 font-medium file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-[10px] file:font-black file:uppercase file:bg-blue-600 file:text-white hover:file:bg-blue-700">
-                                            <p class="text-[9px] text-slate-500 mt-1">PILIH FILE</p>
+                                                class="w-full text-xs text-slate-300 font-medium file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-[10px] file:font-black file:uppercase file:bg-emerald-600 file:text-white hover:file:bg-emerald-700">
+                                            <p class="text-[9px] text-slate-500 mt-1">Upload bukti foto setelah perbaikan</p>
                                         </div>
                                         <div>
                                             <label class="block text-[10px] font-black text-slate-400 uppercase mb-2">Catatan Teknis / Material Diganti</label>
-                                            <textarea x-model="updateForm.completion_notes" rows="3" required placeholder="Contoh: Lampu diganti baru..." 
-                                                class="w-full bg-slate-800 border border-slate-700 rounded-xl p-4 text-xs text-white font-medium focus:ring-2 focus:ring-blue-500 transition-all outline-none"></textarea>
-                                            <p class="text-[9px] text-slate-500 mt-1">Contoh: Lampu diganti baru...</p>
+                                            <textarea x-model="updateForm.completion_notes" rows="3" required placeholder="Contoh: Lampu diganti baru, kabel konektor RJ45 diganti..." 
+                                                class="w-full bg-slate-800 border border-slate-700 rounded-xl p-4 text-xs text-white font-medium focus:ring-2 focus:ring-emerald-500 transition-all outline-none"></textarea>
+                                            <p class="text-[9px] text-slate-500 mt-1">Isi detail apa yang sudah diperbaiki dan material yang diganti</p>
                                         </div>
                                         <button @click="konfirmasiSelesai" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black uppercase text-[11px] py-4 rounded-xl shadow-lg transition-all tracking-widest">
                                             <i class="fas fa-check-circle mr-2"></i> KONFIRMASI SELESAI
@@ -662,9 +689,7 @@
                     <div class="max-w-5xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-6">
                         <div>
                             <nav class="flex mb-3 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
-                                <button @click="goBackToSelesai" class="hover:text-white transition-colors">Kembali</button>
-                                <span class="mx-3 text-slate-600">/</span>
-                                <span class="text-white">Detail Penugasan</span>
+                                <button @click="goBackToSelesai" class="hover:text-white transition-colors">← Kembali ke Riwayat Tugas</button>
                             </nav>
                             <h1 class="text-2xl font-black text-white uppercase tracking-tighter">
                                 Tiket #<span x-text="selectedTask ? selectedTask.ticket_code : ''"></span>
@@ -688,14 +713,16 @@
                                 
                                 <!-- Foto Kerusakan (SEBELUM) -->
                                 <div class="mb-6">
-                                    <p class="text-[9px] font-black text-slate-400 uppercase mb-2">FOTO KERUSAKAN</p>
-                                    <img :src="selectedTask ? (selectedTask.foto_kerusakan || selectedTask.report.foto) : ''" class="w-full rounded-2xl border border-slate-700 shadow-lg">
+                                    <p class="text-[9px] font-black text-red-400 uppercase mb-2">FOTO KERUSAKAN (SEBELUM)</p>
+                                    <img :src="selectedTask ? (selectedTask.foto_kerusakan || selectedTask.report.foto) : ''" class="w-full rounded-2xl border border-red-500/30 shadow-lg"
+                                         onerror="this.onerror=null; this.src='https://placehold.co/600x400/1e293b/ef4444?text=Foto+Gagal+Load'">
                                 </div>
                                 
                                 <!-- Foto Hasil Pengerjaan (SETELAH) -->
                                 <div>
-                                    <p class="text-[9px] font-black text-emerald-400 uppercase mb-2">BUKTI HASIL PENGERJAAN</p>
-                                    <img :src="selectedTask ? selectedTask.foto_perbaikan : ''" class="w-full rounded-2xl border border-emerald-500/30 shadow-lg">
+                                    <p class="text-[9px] font-black text-emerald-400 uppercase mb-2">BUKTI HASIL PENGERJAAN (SETELAH)</p>
+                                    <img :src="selectedTask ? selectedTask.foto_perbaikan : ''" class="w-full rounded-2xl border border-emerald-500/30 shadow-lg"
+                                         onerror="this.onerror=null; this.src='https://placehold.co/600x400/1e293b/10b981?text=Foto+Gagal+Load'">
                                 </div>
                                 
                                 <!-- Catatan Teknisi -->
@@ -754,7 +781,7 @@
                                 
                                 <div class="pt-4">
                                     <button @click="goBackToSelesai" class="w-full bg-slate-700 hover:bg-slate-600 text-white font-black uppercase text-[11px] py-3 rounded-xl transition-all tracking-widest">
-                                        ← KEMBALI
+                                        ← KEMBALI KE RIWAYAT TUGAS
                                     </button>
                                 </div>
                             </div>
@@ -801,6 +828,9 @@
                             </div>
                             <button @click="updateProfile" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-black uppercase text-[11px] py-4 rounded-xl transition-all tracking-widest mt-4">
                                 <i class="fas fa-save mr-2"></i> Simpan Perubahan
+                            </button>
+                            <button @click="logout()" class="w-full bg-red-600 hover:bg-red-700 text-white font-black uppercase text-[11px] py-4 rounded-xl transition-all tracking-widest">
+                                <i class="fas fa-sign-out-alt mr-2"></i> Keluar
                             </button>
                         </div>
                     </div>
