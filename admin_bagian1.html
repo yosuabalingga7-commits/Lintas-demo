@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>LINTAS | Admin - Dishub DKI Jakarta</title>
+    <title>LINTAS | Super Admin - Dishub DKI Jakarta</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
@@ -316,39 +316,59 @@
     filterKondisi: 'semua',
     searchTerm: '',
     
+    // Logika Gambar Random
+    imagePool: [
+        './image/kegiatan_dishub_dki1.png',
+        './image/kegiatan_dishub_dki2.png',
+        './image/kegiatan_dishub_dki3.png',
+        './image/kegiatan_dishub_dki4.png',
+        './image/lampu_hasil_perbaikan.png',
+        './image/lampu_rusak.png',
+        './image/logo_dishub_dki.png',
+        './image/logo_dki.png',
+        './image/terminal_rusak.png'
+    ],
+    getRandomImages(count) {
+        return [...this.imagePool].sort(() => 0.5 - Math.random()).slice(0, count);
+    },
+    
     // Filter untuk Tiket Maintenance
     tiketFilter: 'semua',
     
-    // Data Laporan
+    // Data Laporan (Dinamis dan Detail)
     daftarLaporan: [
-        { id: 1, ticket_number: 'LP-20260411-R2BKD', nama_pelapor: 'YOSUA BALINGGA', kontak_pelapor: '082200127007', judul_laporan: 'PJU Rusak', kondisi_aset: 'Rusak', status: 'masuk', alamat: 'Jl. Cihanjuang, Bandung Barat', lat: -6.8422, lng: 107.4861, foto: null, deskripsi_keluhan: 'Lampu PJU mati total selama 3 hari', kepemilikan: null, logs: [] },
-        { id: 2, ticket_number: 'LP-20260412-GBUS', nama_pelapor: 'BUDI SANTOSO', kontak_pelapor: '08123456789', judul_laporan: 'Rambu Rusak', kondisi_aset: 'Rusak', status: 'masuk', alamat: 'Jl. Thamrin, Jakarta Pusat', lat: -6.1921, lng: 106.8230, foto: null, deskripsi_keluhan: 'Rambu peringatan roboh', kepemilikan: null, logs: [] },
-        { id: 3, ticket_number: 'LP-20260413-DSRD', nama_pelapor: 'SITI AMELIA', kontak_pelapor: '087654321', judul_laporan: 'CCTV Mati', kondisi_aset: 'Kritis', status: 'masuk', alamat: 'Simpang Harmoni, Jakarta Pusat', lat: -6.1792, lng: 106.8175, foto: null, deskripsi_keluhan: 'CCTV tidak berfungsi', kepemilikan: null, logs: [] }
+        { id: 1, ticket_number: 'LP-20260411-R2BKD', nama_pelapor: 'YOSUA BALINGGA', kontak_pelapor: '082200127007', judul_laporan: 'PJU Padam Total di Sudirman', kondisi_aset: 'Rusak', status: 'masuk', alamat: 'Jl. Jend. Sudirman, Jakarta Pusat', lat: -6.2055, lng: 106.8223, foto: './image/lampu_rusak.png', deskripsi_keluhan: 'Lampu PJU mati total selama 3 hari berturut-turut, area menjadi sangat gelap dan rawan.', kepemilikan: null, logs: [] },
+        { id: 2, ticket_number: 'LP-20260412-GBUS', nama_pelapor: 'BUDI SANTOSO', kontak_pelapor: '08123456789', judul_laporan: 'Fasilitas Terminal Rusak Parah', kondisi_aset: 'Kritis', status: 'proses', alamat: 'Terminal Kampung Rambutan', lat: -6.3094, lng: 106.8824, foto: './image/terminal_rusak.png', deskripsi_keluhan: 'Atap terminal bocor dan beberapa ruang tunggu penumpang rusak berat.', kepemilikan: 'dishub', logs: [{ aksi: 'Tiket Maintenance Dibuat', keterangan: 'Tiket MNT-YNYFVL diteruskan ke Seksi Pemeliharaan Fasilitas.', created_at: '12/04/2026 10:30:00', user: { name: 'Admin Dishub' } }] },
+        { id: 3, ticket_number: 'LP-20260413-DSRD', nama_pelapor: 'SITI AMELIA', kontak_pelapor: '087654321', judul_laporan: 'Kamera CCTV Offline', kondisi_aset: 'Rusak', status: 'masuk', alamat: 'Simpang Harmoni, Jakarta Pusat', lat: -6.1792, lng: 106.8175, foto: './image/cctv.png', deskripsi_keluhan: 'CCTV pemantau lalu lintas mati tidak dapat diakses publik sejak pagi tadi.', kepemilikan: null, logs: [] },
+        { id: 4, ticket_number: 'LP-20260414-PJOK', nama_pelapor: 'AHMAD FAUZI', kontak_pelapor: '085544332211', judul_laporan: 'Penyelesaian Perbaikan PJU', kondisi_aset: 'Baik', status: 'selesai', alamat: 'Jl. Merdeka Barat', lat: -6.1754, lng: 106.8271, foto: './image/lampu_hasil_perbaikan.png', deskripsi_keluhan: 'Laporan perbaikan lampu jalan telah sukses dieksekusi.', kepemilikan: 'dishub', logs: [{ aksi: 'Laporan Selesai', keterangan: 'Perbaikan rampung dan tervalidasi oleh sistem.', created_at: '14/04/2026 15:20:00', user: { name: 'System' } }, { aksi: 'Laporan Divalidasi', keterangan: 'Aset dikonfirmasi milik Dishub.', created_at: '13/04/2026 09:10:00', user: { name: 'Admin Dishub' } }] },
+        { id: 5, ticket_number: 'LP-20260415-MNTN', nama_pelapor: 'PETUGAS PATROLI', kontak_pelapor: '081122334455', judul_laporan: 'Pemeliharaan Rutin Marka Jalan', kondisi_aset: 'proses', status: 'proses', alamat: 'Kawasan Bundaran HI', lat: -6.1948, lng: 106.8231, foto: './image/kegiatan_dishub_dki4.png', deskripsi_keluhan: 'Giat pemeliharaan marka jalan dan pengecatan ulang rambu lalu lintas sekitar.', kepemilikan: 'dishub', logs: [{ aksi: 'Tiket Maintenance Dibuat', keterangan: 'Penugasan tim lapangan ke area Bundaran HI.', created_at: '15/04/2026 08:00:00', user: { name: 'Admin Dishub' } }] }
     ],
     
-    // Data Tiket Maintenance
+    // Data Tiket Maintenance (Dinamis dan Terhubung)
     daftarTiket: [
-        { id: 1, ticket_code: 'MNT-1776990406257', report_ticket: 'LP-20260411-R2BKD', user_name: 'RENO BASTIAN', deadline: '2026-05-03', priority: 'TINGGI', status: 'process', progress: 50, asset: 'Penerangan Jalan Umum (PJU) - Lampu Jalan', lokasi: 'Padalarang, Jalan Cihailiwing, Ngamprab, Bandung Barat', foto: './image/lampu rusak.png' },
-        { id: 2, ticket_code: 'MNT-YNYFVL', report_ticket: 'LP-20260412-GBUS', user_name: 'RENO BASTIAN', deadline: '2026-05-10', priority: 'NORMAL', status: 'process', progress: 30, asset: 'Perlengkapan Jalan - Rambu', lokasi: 'Padalarang, Jalan Cihailiwing, Ngamprab, Bandung Barat', foto: './image/terminal_rusak.png' },
-        { id: 3, ticket_code: 'MNT-ZDLXA2UC', report_ticket: 'LP-20260413-DSRD', user_name: 'NAUFAL', deadline: '2026-05-15', priority: 'NORMAL', status: 'pending', progress: 0, asset: 'Pengendalian dan Pengawasan - CCTV', lokasi: 'Padalarang, Jalan Cihailiwing, Ngamprab, Bandung Barat', foto: './image/lampu rusak.png' }
+        { id: 1, ticket_code: 'MNT-1776990406257', report_ticket: 'LP-20260411-R2BKD', user_name: 'RENO BASTIAN', deadline: '2026-05-03', priority: 'TINGGI', status: 'pending', progress: 0, asset: 'Penerangan Jalan Umum (PJU) - Lampu Jalan', lokasi: 'Jl. Jend. Sudirman, Jakarta Pusat', foto: './image/lampu_rusak.png' },
+        { id: 2, ticket_code: 'MNT-YNYFVL', report_ticket: 'LP-20260412-GBUS', user_name: 'AGUS SETIAWAN', deadline: '2026-05-10', priority: 'URGENT', status: 'process', progress: 45, asset: 'Prasarana Transportasi - Terminal', lokasi: 'Terminal Kampung Rambutan', foto: './image/terminal_rusak.png' },
+        { id: 3, ticket_code: 'MNT-ZDLXA2UC', report_ticket: 'LP-20260413-DSRD', user_name: 'BAMBANG SUPRIANTO', deadline: '2026-05-15', priority: 'NORMAL', status: 'pending', progress: 0, asset: 'Pengendalian dan Pengawasan - CCTV', lokasi: 'Simpang Harmoni, Jakarta Pusat', foto: './image/cctv.png' },
+        { id: 4, ticket_code: 'MNT-CMPOK88', report_ticket: 'LP-20260414-PJOK', user_name: 'RENO BASTIAN', deadline: '2026-04-14', priority: 'NORMAL', status: 'finished', progress: 100, asset: 'Penerangan Jalan Umum (PJU) - Lampu Jalan', lokasi: 'Jl. Merdeka Barat', foto: './image/lampu_hasil_perbaikan.png' },
+        { id: 5, ticket_code: 'MNT-PTRL009', report_ticket: 'LP-20260415-MNTN', user_name: 'AGUS SETIAWAN', deadline: '2026-04-20', priority: 'TINGGI', status: 'process', progress: 60, asset: 'Perlengkapan Jalan - Rambu & Marka', lokasi: 'Kawasan Bundaran HI', foto: './image/kegiatan_dishub_dki4.png' }
     ],
     
     // Data Seksi untuk User Management
     daftarSeksiUser: [
         { id: 1, name: 'RENO BASTIAN', nip: '1234567890', role: 'SEKSI', email: 'renos@gmail.com', bidang: 'PENERANGAN JALAN UMUM (PJU)', no_wa: '62882001927007', password: '********', status: 'Aktif' },
-        { id: 2, name: 'Petugas Seksi Lapangan', nip: '19850101', role: 'SEKSI', email: 'seksi@kbb.go.id', bidang: 'PENERANGAN JALAN UMUM (PJU)', no_wa: '628123456789', password: '********', status: 'Aktif' },
-        { id: 3, name: 'YOSUA BALINGGA', nip: '12345678', role: 'SUPER_ADMIN', email: 'admin@kbb.go.id', bidang: 'BIDANG BELUM DISET', no_wa: '-', password: '********', status: 'Aktif' }
+        { id: 2, name: 'AGUS SETIAWAN', nip: '19850101', role: 'SEKSI', email: 'agus.setiawan@jakarta.go.id', bidang: 'PRASARANA TRANSPORTASI', no_wa: '628123456789', password: '********', status: 'Aktif' },
+        { id: 3, name: 'BAMBANG SUPRIANTO', nip: '12345678', role: 'SEKSI', email: 'bambang.s@jakarta.go.id', bidang: 'PENGENDALIAN & PENGAWASAN', no_wa: '-', password: '********', status: 'Aktif' }
     ],
     
     daftarBidang: ['Penerangan Jalan Umum (PJU)', 'Perlengkapan Jalan', 'Fasilitas Lalu Lintas', 'Pengendalian dan Pengawasan', 'Prasarana Transportasi'],
     
     userForm: { name: '', nip: '', email: '', seksi_id: '', no_wa: '', password: '' },
     
-    // Data Seksi
+    // Data Seksi Referensi
     daftarSeksi: [
-        { id: 1, name: 'RENO BASTIAN', bidang: 'PJU', no_hp: '628123456789' },
-        { id: 2, name: 'AGUS SETIAWAN', bidang: 'CCTV', no_hp: '628123456788' },
-        { id: 3, name: 'BAMBANG SUPRIANTO', bidang: 'Rambu Jalan', no_hp: '628123456787' }
+        { id: 1, name: 'RENO BASTIAN', bidang: 'PJU', no_hp: '62882001927007' },
+        { id: 2, name: 'AGUS SETIAWAN', bidang: 'Terminal & Prasarana', no_hp: '628123456788' },
+        { id: 3, name: 'BAMBANG SUPRIANTO', bidang: 'Pengendalian (CCTV)', no_hp: '628123456787' }
     ],
     
     // Data Kategori & Jenis Aset
@@ -386,13 +406,15 @@
     editUser(user) { alert('Edit akun: ' + user.name); },
     deleteUser(user) { if(confirm('Hapus akun ' + user.name + '?')) alert('Akun dihapus'); },
     
+    logout() { if(confirm('Apakah Anda yakin ingin keluar dari sesi Super Admin?')) window.location.href = 'index.html'; },
+    
     openCreateForm() { this.showCreateForm = true; this.formData = { nama: '', kategori: '', jenis: '', status: 'Baik', icon_marker: '💡', alamat: '', lat: '', lng: '' }; this.fotoPreview = null; setTimeout(() => { if (window.initCreateMap) window.initCreateMap(); }, 100); },
     closeCreateForm() { this.showCreateForm = false; },
-    submitForm() { alert('Data aset berhasil disimpan (Dummy)!\\nNama: ' + this.formData.nama); this.closeCreateForm(); },
+    submitForm() { alert('Data aset berhasil disimpan!\nNama: ' + this.formData.nama); this.closeCreateForm(); },
     
     submitReport() { 
         this.isSubmitting = true;
-        setTimeout(() => { alert('Laporan berhasil dikirim!'); this.isSubmitting = false; this.reportForm = { nama_pelapor: '', nip: '', kontak_pelapor: '', judul_laporan: '', kondisi_aset: 'Baik', deskripsi: '', foto: null, foto_preview: null, alamat: 'Mencari lokasi GPS...', lat: '', lng: '' }; if (window.reportMarker) { window.reportMarker.setLatLng([-6.2088, 106.8456]); } }, 500);
+        setTimeout(() => { alert('Laporan berhasil dikirim ke database!'); this.isSubmitting = false; this.reportForm = { nama_pelapor: '', nip: '', kontak_pelapor: '', judul_laporan: '', kondisi_aset: 'Baik', deskripsi: '', foto: null, foto_preview: null, alamat: 'Mencari lokasi GPS...', lat: '', lng: '' }; if (window.reportMarker) { window.reportMarker.setLatLng([-6.2088, 106.8456]); } }, 500);
     },
     handleReportPhoto(event) { const file = event.target.files[0]; if (file) { const reader = new FileReader(); reader.onload = (e) => { this.reportForm.foto_preview = e.target.result; }; reader.readAsDataURL(file); this.reportForm.foto = file; } },
     
@@ -406,25 +428,28 @@
     validateLaporan(kepemilikan) {
         if (this.selectedLaporan && kepemilikan) {
             this.selectedLaporan.kepemilikan = kepemilikan; this.selectedLaporan.status = 'validated';
-            this.selectedLaporan.logs.unshift({ aksi: 'Laporan Divalidasi', keterangan: 'Laporan divalidasi', created_at: new Date().toLocaleString(), user: { name: 'Admin Dishub' } });
+            this.selectedLaporan.logs.unshift({ aksi: 'Laporan Divalidasi', keterangan: 'Laporan divalidasi dan aset dikonfirmasi.', created_at: new Date().toLocaleString(), user: { name: 'Admin Dishub' } });
             alert('Laporan berhasil divalidasi!'); this.showValidateModal = false; this.openCreateTicketFromValidasi(this.selectedLaporan);
         }
     },
     
     openCreateTicketFromValidasi(laporan) { this.selectedLaporan = laporan; this.tiketForm = { report_id: laporan.id, user_id: '', deadline: '', category: '', jenis_aset: '', priority: 'Normal', description: laporan.deskripsi_keluhan || '' }; this.currentPage = 'create_ticket'; },
-    rejectLaporan() { if (this.selectedLaporan) { this.selectedLaporan.status = 'ditolak'; alert('Laporan ditolak!'); this.showRejectModal = false; this.currentPage = 'laporan_index'; } },
+    rejectLaporan() { if (this.selectedLaporan) { this.selectedLaporan.status = 'ditolak'; alert('Laporan terverifikasi sebagai anomali/ditolak!'); this.showRejectModal = false; this.currentPage = 'laporan_index'; } },
     openRejectModal(laporan) { this.selectedLaporan = laporan; this.showRejectModal = true; },
     
     goBackToDetail() { this.currentPage = 'laporan_detail'; },
     getJenisByKategori(kategori) { return this.masterJenisAset[kategori] || []; },
     
     submitTicket(sendWA = false) {
-        if (!this.tiketForm.user_id || !this.tiketForm.deadline || !this.tiketForm.category) { alert('Lengkapi form tiket!'); return; }
+        if (!this.tiketForm.user_id || !this.tiketForm.deadline || !this.tiketForm.category) { alert('Lengkapi spesifikasi form tiket!'); return; }
         const selectedSeksi = this.daftarSeksi.find(s => s.id == this.tiketForm.user_id);
-        const newTicket = { id: this.daftarTiket.length + 1, ticket_code: 'MNT-' + new Date().getTime(), report_ticket: this.selectedLaporan?.ticket_number || 'LP-xxxx', user_name: selectedSeksi.name, deadline: this.tiketForm.deadline, priority: this.tiketForm.priority.toUpperCase(), status: 'pending', progress: 0, asset: this.tiketForm.jenis_aset || 'ASET UMUM', lokasi: this.selectedLaporan?.alamat || 'Alamat tidak tersedia', foto: './image/lampu rusak.png' };
+        const newTicket = { id: this.daftarTiket.length + 1, ticket_code: 'MNT-' + new Date().getTime(), report_ticket: this.selectedLaporan?.ticket_number || 'LP-xxxx', user_name: selectedSeksi.name, deadline: this.tiketForm.deadline, priority: this.tiketForm.priority.toUpperCase(), status: 'pending', progress: 0, asset: this.tiketForm.jenis_aset || 'ASET UMUM', lokasi: this.selectedLaporan?.alamat || 'Alamat tidak tersedia', foto: this.selectedLaporan?.foto || './image/kegiatan_dishub_dki1.png' };
         this.daftarTiket.unshift(newTicket);
-        if (this.selectedLaporan) this.selectedLaporan.status = 'proses perbaikan';
-        if (sendWA) alert('✅ Tiket dibuat!\n📨 WhatsApp ke: ' + selectedSeksi.name); else alert('✅ Tiket dibuat!');
+        if (this.selectedLaporan) {
+            this.selectedLaporan.status = 'proses';
+            this.selectedLaporan.logs.unshift({ aksi: 'Tiket Maintenance Dirilis', keterangan: 'Delegasi tugas diserahkan ke ' + selectedSeksi.name, created_at: new Date().toLocaleString(), user: { name: 'Admin Dishub' } });
+        }
+        if (sendWA) alert('✅ Tiket didelegasikan!\n📨 Mengirim notifikasi WhatsApp ke: ' + selectedSeksi.name); else alert('✅ Tiket berhasil disimpan dalam sistem!');
         this.tiketForm = { report_id: null, user_id: '', deadline: '', category: '', jenis_aset: '', priority: 'Normal', description: '' };
         this.currentPage = 'tiket_index';
     },
@@ -436,12 +461,12 @@
     getPendingTiket() { return this.daftarTiket.filter(t => t.status === 'pending').length; },
     getPriorityClass(priority) { if(priority === 'URGENT') return 'bg-rose-600 text-white border-rose-600 animate-pulse'; if(priority === 'TINGGI') return 'bg-orange-100 text-orange-700 border-orange-200'; return 'bg-blue-100 text-blue-700 border-blue-200'; },
     getBorderClass(priority) { if(priority === 'URGENT') return 'border-l-rose-600'; if(priority === 'TINGGI') return 'border-l-orange-500'; return 'border-l-blue-500'; },
-    detailTiket(tiket) { alert('Detail Tiket: ' + tiket.ticket_code); },
-    updateTiket(tiket) { alert('Update Tiket: ' + tiket.ticket_code); },
+    detailTiket(tiket) { alert('Inspeksi Detail Tiket: ' + tiket.ticket_code); },
+    updateTiket(tiket) { alert('Memuat Form Update Tiket: ' + tiket.ticket_code); },
     
     // Konfigurasi Map Functions
     configLat: '-6.2088', configLng: '106.8456', configZoom: '11',
-    saveMapConfig() { alert('✅ Pengaturan Map Disimpan!'); },
+    saveMapConfig() { alert('✅ Parameter Node Peta Berhasil Diperbarui!'); },
     
     formData: { nama: '', kategori: '', jenis: '', status: 'Baik', icon_marker: '💡', alamat: '', lat: '', lng: '' },
     fotoPreview: null,
@@ -462,7 +487,8 @@
         <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'"
             class="fixed inset-y-0 left-0 z-[1050] w-72 transition-transform duration-300 transform lg:static lg:inset-0 bg-slate-900 shadow-2xl flex flex-col">
             <div class="flex items-center gap-3 px-6 pt-8 pb-6 border-b border-slate-800">
-                <img src="./image/logo_dishub_dki.png" alt="Logo" class="w-10 h-10 rounded-xl object-cover">
+                <img src="./image/dishub_dki.png" alt="Logo"
+                    class="w-10 h-10 rounded-xl object-cover">
                 <div>
                     <h1 class="text-xs font-black tracking-tighter text-white leading-none">Dishub DKI Jakarta</h1>
                     <p class="text-[8px] text-indigo-400 font-bold uppercase tracking-[0.2em] mt-1">Lintas</p>
@@ -523,7 +549,7 @@
                 </div>
                 <div class="pt-6 mt-4 border-t border-slate-800">
                     <p class="px-3 text-[9px] font-black text-slate-600 uppercase tracking-[0.2em] mb-3">Sistem</p>
-                    <button
+                    <button @click="logout"
                         class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-red-400 hover:bg-red-500/10"><span
                             class="text-lg">🚪</span><span class="text-sm font-bold">Keluar sistem</span></button>
                 </div>
@@ -535,7 +561,7 @@
                         AD</div>
                     <div>
                         <p class="text-[10px] font-black text-white truncate">Admin Dishub</p>
-                        <p class="text-[8px] font-bold text-slate-400 uppercase">Admin</p>
+                        <p class="text-[8px] font-bold text-slate-400 uppercase">Super Admin</p>
                     </div>
                 </div>
             </div>
@@ -554,7 +580,8 @@
                     </div>
                 </div>
                 <div class="flex items-center gap-4">
-                    <div class="relative"><button @click="notifOpen = !notifOpen; profileOpen = false"
+                    <div class="relative">
+                        <button @click="notifOpen = !notifOpen; profileOpen = false"
                             class="text-white/80 hover:text-white text-xl relative"><i class="far fa-bell"></i><span
                                 class="absolute -top-1 -right-2 w-4 h-4 bg-red-500 rounded-full text-[9px] flex items-center justify-center font-black text-white">3</span></button>
                         <div x-show="notifOpen" @click.away="notifOpen = false" x-cloak
@@ -563,8 +590,8 @@
                                     class="text-[10px] font-black text-slate-800 uppercase">Notifikasi</span><span
                                     class="text-[9px] font-bold text-white bg-indigo-600 px-2 py-0.5 rounded-full">3
                                     Baru</span></div>
-                            <div class="max-h-80 overflow-y-auto"><a href="#"
-                                    class="block px-5 py-3 border-b hover:bg-indigo-50">
+                            <div class="max-h-80 overflow-y-auto">
+                                <a href="#" class="block px-5 py-3 border-b hover:bg-indigo-50">
                                     <div class="flex gap-3">
                                         <div
                                             class="w-8 h-8 bg-emerald-100 rounded-full flex justify-center items-center">
@@ -574,7 +601,8 @@
                                             <p class="text-[9px] text-slate-500">Tiket #MNT-001 selesai</p>
                                         </div>
                                     </div>
-                                </a></div>
+                                </a>
+                            </div>
                         </div>
                     </div>
                     <div class="relative">
@@ -582,17 +610,19 @@
                             class="flex items-center gap-3 cursor-pointer">
                             <div class="text-right hidden sm:block">
                                 <p class="text-[10px] font-black text-white uppercase">Admin Dishub</p>
-                                <p class="text-[7px] font-bold text-indigo-300 uppercase">Admin</p>
+                                <p class="text-[7px] font-bold text-indigo-300 uppercase">Super Admin</p>
                             </div>
                             <div
                                 class="w-9 h-9 bg-indigo-600 rounded-xl flex justify-center items-center text-white font-black text-sm">
                                 AD</div>
                         </div>
                         <div x-show="profileOpen" @click.away="profileOpen = false" x-cloak
-                            class="absolute right-0 mt-3 w-48 bg-white rounded-xl shadow-2xl py-2 z-[1100]"><a href="#"
+                            class="absolute right-0 mt-3 w-48 bg-white rounded-xl shadow-2xl py-2 z-[1100]">
+                            <a href="#"
                                 class="flex items-center gap-3 px-4 py-2.5 text-[11px] font-bold text-slate-600 hover:bg-indigo-50"><span>⚙️</span>
                                 Pengaturan</a>
-                            <div class="border-t my-1"></div><button
+                            <div class="border-t my-1"></div>
+                            <button @click="logout"
                                 class="w-full flex items-center gap-3 px-4 py-2.5 text-[11px] font-bold text-red-500 hover:bg-red-50"><span>🚪</span>
                                 Keluar</button>
                         </div>
@@ -693,7 +723,7 @@
                                                 class="text-gray-600 uppercase">Kritis</span></div><span
                                             id="statKritisVal" class="text-gray-900 font-black">1</span>
                                     </div>
-                                    <div onclick="filterDashboardByStatus('Proses Perbaikan')" id="btnStatProses"
+                                    <div onclick="filterDashboardByStatus('Proses')" id="btnStatProses"
                                         class="flex justify-between items-center text-[10px] font-bold p-2.5 bg-gray-50 rounded-xl cursor-pointer hover:bg-blue-50">
                                         <div class="flex gap-2"><span
                                                 class="w-2.5 h-2.5 rounded-full bg-blue-500"></span><span
@@ -825,7 +855,7 @@
                                                     type="checkbox" name="fStatusAsset" value="Baik" checked
                                                     class="filter-checkbox-asset"><span>Baik</span></label><label
                                                 class="flex items-center gap-2 p-2 cursor-pointer"><input
-                                                    type="checkbox" name="fStatusAsset" value="Proses Perbaikan" checked
+                                                    type="checkbox" name="fStatusAsset" value="Proses" checked
                                                     class="filter-checkbox-asset"><span>Proses</span></label><label
                                                 class="flex items-center gap-2 p-2 cursor-pointer"><input
                                                     type="checkbox" name="fStatusAsset" value="Rusak" checked
@@ -910,7 +940,7 @@
                                                 kondisi</label><select x-model="reportForm.kondisi_aset"
                                                 class="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 text-sm font-bold outline-none focus:bg-white focus:border-[#0B2A4A]">
                                                 <option value="Baik">✅ Baik / Normal</option>
-                                                <option value="Proses Perbaikan">⚙️ Proses perbaikan</option>
+                                                <option value="proses">⚙️ Proses</option>
                                                 <option value="Rusak">🚨 Rusak</option>
                                                 <option value="Kritis">⚠️ Kritis</option>
                                             </select></div>
@@ -918,7 +948,8 @@
                                                 kronologi</label><textarea x-model="reportForm.deskripsi" rows="3"
                                                 class="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 text-sm font-semibold outline-none focus:bg-white focus:border-[#0B2A4A]"
                                                 placeholder="Tambahkan catatan teknis..."></textarea></div>
-                                        <div><label class="text-[10px] font-bold text-slate-400 uppercase ml-1">Foto
+                                        <div>
+                                            <label class="text-[10px] font-bold text-slate-400 uppercase ml-1">Foto
                                                 dokumentasi</label>
                                             <div
                                                 class="relative mt-2 border-2 border-dashed border-slate-200 rounded-xl p-5 text-center hover:bg-slate-50 transition-all cursor-pointer group">
@@ -929,7 +960,7 @@
                                                     @change="handleReportPhoto($event)">
                                             </div>
                                             <div x-show="reportForm.foto_preview" class="mt-3 text-center"><img
-                                                    src="./image/lampu_rusak.png"
+                                                    :src="reportForm.foto_preview"
                                                     class="inline-block max-h-48 rounded-xl border-2 border-white shadow-lg">
                                             </div>
                                         </div>
@@ -947,12 +978,12 @@
                                                 kejadian</h3>
                                         </div>
                                         <div class="relative">
-                                            <div id="reportMap" class="h-80 rounded-xl"></div><button type="button"
-                                                onclick="getCurrentLocationReport()" class="locate-button"
-                                                title="Cari lokasi saya"><svg xmlns="http://www.w3.org/2000/svg"
-                                                    class="w-5 h-5 text-[#0B2A4A]" viewBox="0 0 24 24" fill="none"
-                                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                                    stroke-linejoin="round">
+                                            <div id="reportMap" class="h-80 rounded-xl"></div>
+                                            <button type="button" onclick="getCurrentLocationReport()"
+                                                class="locate-button" title="Cari lokasi saya"><svg
+                                                    xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-[#0B2A4A]"
+                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                                     <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                                                     <circle cx="12" cy="10" r="3"></circle>
                                                 </svg></button>
@@ -962,9 +993,10 @@
                                                 terdeteksi:</label>
                                             <p class="text-[11px] font-bold text-[#0B2A4A] italic"
                                                 x-text="reportForm.alamat"></p>
-                                        </div><input type="hidden" id="report_lat" x-model="reportForm.lat"><input
-                                            type="hidden" id="report_lng" x-model="reportForm.lng"><button type="button"
-                                            @click="submitReport" x-bind:disabled="isSubmitting"
+                                        </div>
+                                        <input type="hidden" id="report_lat" x-model="reportForm.lat"><input
+                                            type="hidden" id="report_lng" x-model="reportForm.lng">
+                                        <button type="button" @click="submitReport" x-bind:disabled="isSubmitting"
                                             class="w-full bg-[#0B2A4A] text-amber-400 py-4 rounded-xl text-sm font-black uppercase shadow-xl hover:bg-[#0f365e] transition-all mt-5"><span
                                                 x-show="!isSubmitting"><i class="fas fa-paper-plane mr-2"></i> Kirim
                                                 laporan resmi</span><span x-show="isSubmitting"><i
@@ -980,28 +1012,31 @@
                 <div x-show="currentPage === 'laporan_index'"
                     class="flex-1 min-h-0 w-full overflow-y-auto bg-gray-100 p-6">
                     <div class="max-w-7xl mx-auto">
-                        <div x-data="{ activeSlide: 1, slides: [1, 2, 3, 4], init() { setInterval(() => { this.activeSlide = this.activeSlide === 4 ? 1 : this.activeSlide + 1 }, 5000) } }"
+                        <div x-data="{ activeSlide: 0, slides: getRandomImages(4), init() { setInterval(() => { this.activeSlide = (this.activeSlide + 1) % this.slides.length }, 5000) } }"
                             class="relative w-full h-32 md:h-48 rounded-3xl overflow-hidden mb-8 shadow-xl bg-slate-900 border border-slate-200/20 shrink-0">
-                            <template x-for="slide in slides" :key="slide"><img x-show="activeSlide === slide"
-                                    x-transition.opacity.duration.1000ms
-                                    :src="`./image/kegiatan_dishub_dki${slide}.png`"
+                            <template x-for="(slideImg, index) in slides" :key="index">
+                                <img x-show="activeSlide === index" x-transition.opacity.duration.1000ms :src="slideImg"
                                     class="absolute inset-0 w-full h-full object-cover opacity-40 mix-blend-luminosity"
-                                    alt="Giat Dishub"></template>
+                                    alt="Giat Dishub">
+                            </template>
                             <div
                                 class="absolute inset-0 bg-gradient-to-r from-slate-900 via-slate-900/80 to-transparent flex flex-col justify-center px-6 md:px-10 z-10 pointer-events-none">
                                 <span
                                     class="inline-block px-3 py-1 bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 text-[9px] font-black uppercase tracking-[0.2em] rounded-full w-fit mb-2">Lintas
                                     Jakarta</span>
                                 <h2 class="text-white font-black text-xl md:text-3xl uppercase tracking-tighter">
-                                    Manajemen <span class="text-amber-400">Pelaporan</span></h2>
+                                    Manajemen <span class="text-amber-400">Pengaduan</span></h2>
                                 <p
                                     class="text-slate-400 text-[10px] md:text-xs font-bold mt-2 max-w-md hidden sm:block">
                                     Pemantauan dan penyelesaian fasilitas tata kelola transportasi terintegrasi.</p>
                             </div>
-                            <div class="absolute bottom-4 right-6 flex gap-2 z-20 pointer-events-auto"><template
-                                    x-for="slide in slides" :key="slide"><button @click="activeSlide = slide"
-                                        :class="activeSlide === slide ? 'w-6 bg-amber-400' : 'w-2 bg-white/30 hover:bg-white/60'"
-                                        class="h-2 rounded-full transition-all duration-300"></button></template></div>
+                            <div class="absolute bottom-4 right-6 flex gap-2 z-20 pointer-events-auto">
+                                <template x-for="(slideImg, index) in slides" :key="'btn-'+index">
+                                    <button @click="activeSlide = index"
+                                        :class="activeSlide === index ? 'w-6 bg-amber-400' : 'w-2 bg-white/30 hover:bg-white/60'"
+                                        class="h-2 rounded-full transition-all duration-300"></button>
+                                </template>
+                            </div>
                         </div>
 
                         <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 gap-4">
@@ -1035,9 +1070,9 @@
                             </div>
                             <div class="bg-blue-50 p-5 rounded-3xl border-2 border-blue-100">
                                 <p class="text-[8px] font-black text-blue-600 uppercase tracking-widest mb-1">Proses
-                                    perbaikan</p>
+                                    </p>
                                 <p class="text-2xl font-black text-blue-600"
-                                    x-text="daftarLaporan.filter(l => l.status === 'proses perbaikan').length">0</p>
+                                    x-text="daftarLaporan.filter(l => l.status === 'proses').length">0</p>
                             </div>
                             <div class="bg-green-50 p-5 rounded-3xl border-2 border-green-100">
                                 <p class="text-[8px] font-black text-green-600 uppercase tracking-widest mb-1">Selesai /
@@ -1057,21 +1092,24 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                                 </svg></div>
-                            <div class="flex flex-wrap gap-3"><select x-model="filterKondisi"
+                            <div class="flex flex-wrap gap-3">
+                                <select x-model="filterKondisi"
                                     class="bg-slate-50 px-4 py-3.5 rounded-2xl border-none text-[10px] font-black uppercase">
                                     <option value="semua">Semua kondisi</option>
                                     <option value="Rusak">Rusak</option>
                                     <option value="Kritis">Kritis</option>
                                     <option value="Baik">Baik</option>
-                                </select><select x-model="filterStatus"
+                                </select>
+                                <select x-model="filterStatus"
                                     class="bg-slate-50 px-4 py-3.5 rounded-2xl border-none text-[10px] font-black uppercase">
                                     <option value="semua">Semua status sistem</option>
                                     <option value="masuk">🔴 Masuk (baru)</option>
                                     <option value="rusak">🟡 Status: Rusak</option>
                                     <option value="kritis">🔴 Status: Kritis</option>
-                                    <option value="proses perbaikan">🔵 Proses perbaikan</option>
+                                    <option value="proses">🔵 proses</option>
                                     <option value="baik">🟢 Selesai (baik)</option>
-                                </select><button @click="filterStatus='semua'; filterKondisi='semua'; searchTerm=''"
+                                </select>
+                                <button @click="filterStatus='semua'; filterKondisi='semua'; searchTerm=''"
                                     class="bg-slate-900 text-white px-6 py-3.5 rounded-2xl text-[10px] font-black uppercase">Reset</button>
                             </div>
                         </div>
@@ -1090,7 +1128,8 @@
                                             <th class="p-6 text-right">Aksi</th>
                                             </td>
                                     </thead>
-                                    <tbody class="text-slate-600 text-[11px] font-bold"><template
+                                    <tbody class="text-slate-600 text-[11px] font-bold">
+                                        <template
                                             x-for="(laporan, idx) in daftarLaporan.filter(l => checkFilter(l.status, filterStatus) && checkFilter(l.kondisi_aset, filterKondisi) && (searchTerm === '' || l.ticket_number.toLowerCase().includes(searchTerm.toLowerCase()) || l.nama_pelapor.toLowerCase().includes(searchTerm.toLowerCase())))"
                                             :key="laporan.id">
                                             <tr class="border-b border-slate-50 hover:bg-slate-50/50 transition">
@@ -1110,7 +1149,7 @@
                                                         x-text="laporan.kondisi_aset"></span></td>
                                                 <td class="p-6 text-center"><span
                                                         class="px-3 py-1.5 rounded-full text-[8px] font-black uppercase"
-                                                        :class="laporan.status === 'masuk' ? 'bg-red-50 text-red-600 border border-red-100' : (laporan.status === 'proses perbaikan' ? 'bg-blue-600 text-white shadow-lg shadow-blue-100' : (laporan.status === 'ditolak' ? 'bg-slate-100 text-slate-600' : 'bg-green-100 text-green-600 border border-green-200'))"
+                                                        :class="laporan.status === 'masuk' ? 'bg-red-50 text-red-600 border border-red-100' : (laporan.status === 'proses' ? 'bg-blue-600 text-white shadow-lg shadow-blue-100' : (laporan.status === 'ditolak' ? 'bg-slate-100 text-slate-600' : 'bg-green-100 text-green-600 border border-green-200'))"
                                                         x-text="laporan.status"></span></td>
                                                 <td class="p-6 text-right"><button @click="viewDetailLaporan(laporan)"
                                                         class="bg-indigo-600 text-white px-5 py-2.5 rounded-xl text-[9px] font-black uppercase hover:bg-slate-900 transition">Detail
@@ -1189,8 +1228,16 @@
                                         <div class="p-3 border-b border-slate-100 bg-slate-50"><span
                                                 class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Foto
                                                 kejadian</span></div>
-                                        <div class="h-40 bg-slate-100 flex items-center justify-center"><span
-                                                class="text-slate-400 text-[9px] font-black">Tidak ada foto</span></div>
+                                        <div
+                                            class="h-48 bg-slate-100 flex items-center justify-center overflow-hidden relative">
+                                            <template x-if="selectedLaporan?.foto">
+                                                <img :src="selectedLaporan.foto" class="w-full h-full object-cover"
+                                                    alt="Foto">
+                                            </template>
+                                            <template x-if="!selectedLaporan?.foto">
+                                                <span class="text-slate-400 text-[9px] font-black">Tidak ada foto</span>
+                                            </template>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="bg-white border border-slate-200 rounded-3xl overflow-hidden">
@@ -1202,8 +1249,8 @@
                                 <div class="bg-white border border-slate-200 rounded-3xl p-8">
                                     <h4 class="text-[11px] font-black text-[#0B2A4A] uppercase tracking-widest mb-8">
                                         Riwayat aktivitas</h4>
-                                    <div class="relative pl-6 border-l-2 border-slate-100 space-y-8"><template
-                                            x-for="log in (selectedLaporan?.logs || [])" :key="log.created_at">
+                                    <div class="relative pl-6 border-l-2 border-slate-100 space-y-8">
+                                        <template x-for="log in (selectedLaporan?.logs || [])" :key="log.created_at">
                                             <div class="relative">
                                                 <div
                                                     class="absolute -left-[31px] top-0 w-3.5 h-3.5 bg-white border-4 border-indigo-500 rounded-full shadow-sm">
@@ -1219,7 +1266,7 @@
                                                 <div
                                                     class="bg-slate-50 inline-block px-3 py-1.5 rounded-lg border border-slate-100 mt-2">
                                                     <p class="text-[11px] text-slate-500 italic"
-                                                        x-text="'\"' + log.keterangan + ' \"'"></p>
+                                                        x-text="'&quot;' + log.keterangan + '&quot;'"></p>
                                                 </div>
                                             </div>
                                         </template>
@@ -1230,6 +1277,13 @@
                                 </div>
                             </div>
                             <div class="lg:col-span-1 space-y-6">
+                                <div class="bg-white border border-slate-200 rounded-3xl p-6">
+                                    <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4">
+                                        Laporan Masyarakat</h3>
+                                    <p class="text-[11px] text-slate-700 leading-relaxed italic"
+                                        x-text="'&quot;' + (selectedLaporan?.deskripsi_keluhan || 'Tidak ada catatan tambahan') + '&quot;'">
+                                    </p>
+                                </div>
                                 <div x-show="selectedLaporan?.status === 'masuk'"
                                     class="bg-[#0B2A4A] rounded-3xl p-8 shadow-2xl text-white">
                                     <div class="flex items-center gap-3 mb-8">
@@ -1250,13 +1304,13 @@
                 <div x-show="currentPage === 'create_ticket'"
                     class="flex-1 min-h-0 w-full overflow-y-auto bg-gray-100 p-6">
                     <div class="max-w-5xl mx-auto">
-                        <div x-data="{ activeSlide: 1, slides: [1, 2, 3, 4], init() { setInterval(() => { this.activeSlide = this.activeSlide === 4 ? 1 : this.activeSlide + 1 }, 5000) } }"
+                        <div x-data="{ activeSlide: 0, slides: getRandomImages(4), init() { setInterval(() => { this.activeSlide = (this.activeSlide + 1) % this.slides.length }, 5000) } }"
                             class="relative w-full h-28 md:h-36 rounded-3xl overflow-hidden mb-8 shadow-xl bg-slate-900 border border-slate-200/20 shrink-0">
-                            <template x-for="slide in slides" :key="slide"><img x-show="activeSlide === slide"
-                                    x-transition.opacity.duration.1000ms
-                                    :src="`./image/kegiatan_dishub_dki${slide}.png`"
+                            <template x-for="(slideImg, index) in slides" :key="index">
+                                <img x-show="activeSlide === index" x-transition.opacity.duration.1000ms :src="slideImg"
                                     class="absolute inset-0 w-full h-full object-cover opacity-40 mix-blend-luminosity"
-                                    alt="Giat Dishub"></template>
+                                    alt="Giat Dishub">
+                            </template>
                             <div
                                 class="absolute inset-0 bg-gradient-to-r from-slate-900 via-slate-900/80 to-transparent flex flex-col justify-center px-6 md:px-10 z-10 pointer-events-none">
                                 <span
@@ -1264,10 +1318,13 @@
                                 <h2 class="text-white font-black text-xl md:text-2xl uppercase tracking-tighter">
                                     Penugasan <span class="text-amber-400">Teknis Lapangan</span></h2>
                             </div>
-                            <div class="absolute bottom-4 right-6 flex gap-2 z-20 pointer-events-auto"><template
-                                    x-for="slide in slides" :key="slide"><button @click="activeSlide = slide"
-                                        :class="activeSlide === slide ? 'w-6 bg-amber-400' : 'w-2 bg-white/30 hover:bg-white/60'"
-                                        class="h-2 rounded-full transition-all duration-300"></button></template></div>
+                            <div class="absolute bottom-4 right-6 flex gap-2 z-20 pointer-events-auto">
+                                <template x-for="(slideImg, index) in slides" :key="'btn-'+index">
+                                    <button @click="activeSlide = index"
+                                        :class="activeSlide === index ? 'w-6 bg-amber-400' : 'w-2 bg-white/30 hover:bg-white/60'"
+                                        class="h-2 rounded-full transition-all duration-300"></button>
+                                </template>
+                            </div>
                         </div>
 
                         <button @click="goBackToDetail"
@@ -1310,7 +1367,8 @@
                             </div>
                             <div class="lg:col-span-2">
                                 <div class="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm space-y-6">
-                                    <div class="pb-4 border-b border-slate-100"><label
+                                    <div class="pb-4 border-b border-slate-100">
+                                        <label
                                             class="text-[10px] font-black text-slate-400 uppercase mb-3 block tracking-widest">Status
                                             kepemilikan aset</label>
                                         <div
@@ -1321,7 +1379,7 @@
                                             </div>
                                             <div>
                                                 <p class="text-[11px] font-black text-[#0B2A4A] uppercase tracking-wider"
-                                                    x-text="selectedLaporan?.kepemilikan === 'dishub' ? 'Dishub' : 'Umum / pihak 3'">
+                                                    x-text="selectedLaporan?.kepemilikan === 'dishub' ? 'Aset Internal Dishub' : 'Aset Umum / Pihak Ketiga'">
                                                 </p>
                                                 <p class="text-[9px] text-slate-400 font-bold uppercase">Status terkunci
                                                 </p>
@@ -1380,16 +1438,17 @@
                                                     Instruksi perbaikan</label><textarea x-model="tiketForm.description"
                                                     rows="4"
                                                     class="w-full bg-slate-50 border border-slate-200 rounded-2xl p-5 text-[#0B2A4A] text-xs font-medium outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
-                                                    placeholder="Tulis instruksi pengerjaan..."></textarea></div>
+                                                    placeholder="Tulis instruksi pengerjaan teknis..."></textarea></div>
                                         </div>
                                     </div>
-                                    <div class="flex gap-4 pt-4 border-t border-slate-200"><button
-                                            @click="submitTicket(false)"
+                                    <div class="flex gap-4 pt-4 border-t border-slate-200">
+                                        <button @click="submitTicket(false)"
                                             class="flex-1 bg-slate-800 text-white py-4 rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-lg hover:bg-slate-700 transition"><i
-                                                class="fas fa-save mr-2"></i> Simpan saja</button><button
-                                            @click="submitTicket(true)"
+                                                class="fas fa-save mr-2"></i> Simpan Saja</button>
+                                        <button @click="submitTicket(true)"
                                             class="flex-1 bg-[#25D366] text-white py-4 rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-lg hover:bg-[#128C7E] transition flex items-center justify-center gap-2"><i
-                                                class="fab fa-whatsapp text-lg"></i> Simpan & kirim WA</button></div>
+                                                class="fab fa-whatsapp text-lg"></i> Simpan & Broadcast WA</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -1399,13 +1458,13 @@
                 <div x-show="currentPage === 'tiket_index'"
                     class="flex-1 min-h-0 w-full overflow-y-auto bg-gray-100 p-6">
                     <div class="max-w-7xl mx-auto">
-                        <div x-data="{ activeSlide: 1, slides: [1, 2, 3, 4], init() { setInterval(() => { this.activeSlide = this.activeSlide === 4 ? 1 : this.activeSlide + 1 }, 5000) } }"
+                        <div x-data="{ activeSlide: 0, slides: getRandomImages(4), init() { setInterval(() => { this.activeSlide = (this.activeSlide + 1) % this.slides.length }, 5000) } }"
                             class="relative w-full h-32 md:h-48 rounded-3xl overflow-hidden mb-8 shadow-xl bg-slate-900 border border-slate-200/20 shrink-0">
-                            <template x-for="slide in slides" :key="slide"><img x-show="activeSlide === slide"
-                                    x-transition.opacity.duration.1000ms
-                                    :src="`./image/kegiatan_dishub_dki${slide}.png`"
+                            <template x-for="(slideImg, index) in slides" :key="index">
+                                <img x-show="activeSlide === index" x-transition.opacity.duration.1000ms :src="slideImg"
                                     class="absolute inset-0 w-full h-full object-cover opacity-40 mix-blend-luminosity"
-                                    alt="Giat Dishub"></template>
+                                    alt="Giat Dishub">
+                            </template>
                             <div
                                 class="absolute inset-0 bg-gradient-to-r from-slate-900 via-slate-900/80 to-transparent flex flex-col justify-center px-6 md:px-10 z-10 pointer-events-none">
                                 <span
@@ -1417,10 +1476,13 @@
                                     class="text-slate-400 text-[10px] md:text-xs font-bold mt-2 max-w-md hidden sm:block">
                                     Sistem pemantauan status dan log pemeliharaan aset terpusat.</p>
                             </div>
-                            <div class="absolute bottom-4 right-6 flex gap-2 z-20 pointer-events-auto"><template
-                                    x-for="slide in slides" :key="slide"><button @click="activeSlide = slide"
-                                        :class="activeSlide === slide ? 'w-6 bg-amber-400' : 'w-2 bg-white/30 hover:bg-white/60'"
-                                        class="h-2 rounded-full transition-all duration-300"></button></template></div>
+                            <div class="absolute bottom-4 right-6 flex gap-2 z-20 pointer-events-auto">
+                                <template x-for="(slideImg, index) in slides" :key="'btn-'+index">
+                                    <button @click="activeSlide = index"
+                                        :class="activeSlide === index ? 'w-6 bg-amber-400' : 'w-2 bg-white/30 hover:bg-white/60'"
+                                        class="h-2 rounded-full transition-all duration-300"></button>
+                                </template>
+                            </div>
                         </div>
 
                         <div
@@ -1469,13 +1531,14 @@
                                 <p class="text-3xl font-black text-amber-600" x-text="getPendingTiket()"></p>
                             </div>
                         </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"><template
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            <template
                                 x-for="(tiket, idx) in daftarTiket.filter(t => tiketFilter === 'semua' || t.status === tiketFilter)"
                                 :key="tiket.id">
                                 <div class="bg-white rounded-[2.5rem] shadow-xl shadow-slate-200/40 border-2 border-slate-100 transition-all duration-300 hover:-translate-y-2 overflow-hidden relative"
                                     :class="getBorderClass(tiket.priority)">
-                                    <div class="relative h-40 w-full overflow-hidden bg-slate-200"><img
-                                            src="./image/terminal_rusak.png" class="w-full h-full object-cover"
+                                    <div class="relative h-40 w-full overflow-hidden bg-slate-200">
+                                        <img :src="tiket.foto" class="w-full h-full object-cover"
                                             onerror="this.onerror=null; this.src='https://placehold.co/400x300/1e293b/475569?text=Gambar+Gagal+Load'">
                                         <div class="absolute top-4 left-4"><span
                                                 class="px-3 py-1.5 rounded-lg text-[9px] font-black uppercase shadow-sm border"
@@ -1570,7 +1633,8 @@
                                         </div>
                                     </div>
                                 </div>
-                            </template></div>
+                            </template>
+                        </div>
                         <div x-show="daftarTiket.length === 0"
                             class="flex flex-col items-center justify-center py-20 bg-white rounded-[3rem] border-2 border-dashed border-slate-200 mt-8">
                             <div class="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mb-4"><i
@@ -1585,13 +1649,13 @@
 
                 <div x-show="currentPage === 'users'" class="flex-1 min-h-0 w-full overflow-y-auto bg-gray-100 p-6">
                     <div class="max-w-7xl mx-auto">
-                        <div x-data="{ activeSlide: 1, slides: [1, 2, 3, 4], init() { setInterval(() => { this.activeSlide = this.activeSlide === 4 ? 1 : this.activeSlide + 1 }, 5000) } }"
+                        <div x-data="{ activeSlide: 0, slides: getRandomImages(4), init() { setInterval(() => { this.activeSlide = (this.activeSlide + 1) % this.slides.length }, 5000) } }"
                             class="relative w-full h-32 md:h-40 rounded-3xl overflow-hidden mb-8 shadow-xl bg-slate-900 border border-slate-200/20 shrink-0">
-                            <template x-for="slide in slides" :key="slide"><img x-show="activeSlide === slide"
-                                    x-transition.opacity.duration.1000ms
-                                    :src="`./image/kegiatan_dishub_dki${slide}.png`"
+                            <template x-for="(slideImg, index) in slides" :key="index">
+                                <img x-show="activeSlide === index" x-transition.opacity.duration.1000ms :src="slideImg"
                                     class="absolute inset-0 w-full h-full object-cover opacity-40 mix-blend-luminosity"
-                                    alt="Giat Dishub"></template>
+                                    alt="Giat Dishub">
+                            </template>
                             <div
                                 class="absolute inset-0 bg-gradient-to-r from-slate-900 via-slate-900/80 to-transparent flex flex-col justify-center px-6 md:px-10 z-10 pointer-events-none">
                                 <span
@@ -1602,10 +1666,13 @@
                                     class="text-slate-400 text-[10px] md:text-xs font-bold mt-2 max-w-md hidden sm:block">
                                     Pengelolaan basis data pengguna dan petugas lapangan Lintas.</p>
                             </div>
-                            <div class="absolute bottom-4 right-6 flex gap-2 z-20 pointer-events-auto"><template
-                                    x-for="slide in slides" :key="slide"><button @click="activeSlide = slide"
-                                        :class="activeSlide === slide ? 'w-6 bg-amber-400' : 'w-2 bg-white/30 hover:bg-white/60'"
-                                        class="h-2 rounded-full transition-all duration-300"></button></template></div>
+                            <div class="absolute bottom-4 right-6 flex gap-2 z-20 pointer-events-auto">
+                                <template x-for="(slideImg, index) in slides" :key="'btn-'+index">
+                                    <button @click="activeSlide = index"
+                                        :class="activeSlide === index ? 'w-6 bg-amber-400' : 'w-2 bg-white/30 hover:bg-white/60'"
+                                        class="h-2 rounded-full transition-all duration-300"></button>
+                                </template>
+                            </div>
                         </div>
 
                         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
@@ -1640,8 +1707,8 @@
                                             class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">
                                             Aksi</th>
                                     </thead>
-                                    <tbody class="divide-y divide-slate-50"><template x-for="user in daftarSeksiUser"
-                                            :key="user.id">
+                                    <tbody class="divide-y divide-slate-50">
+                                        <template x-for="user in daftarSeksiUser" :key="user.id">
                                             <tr class="hover:bg-slate-50/50 transition-colors">
                                                 <td class="px-6 py-4">
                                                     <div class="flex flex-col"><span
@@ -1720,12 +1787,10 @@
                     <div class="p-6 md:px-10 pt-10 pb-6">
                         <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
                             <div class="space-y-1">
-                                <div class="flex items-center gap-2 mb-1">
-                                    <span class="w-8 h-1 bg-indigo-600 rounded-full"></span>
-                                    <span
+                                <div class="flex items-center gap-2 mb-1"><span
+                                        class="w-8 h-1 bg-indigo-600 rounded-full"></span><span
                                         class="text-[10px] font-black text-indigo-600 uppercase tracking-[0.3em]">System
-                                        engine</span>
-                                </div>
+                                        engine</span></div>
                                 <h1 class="text-4xl font-black text-slate-900 tracking-tight uppercase">Konfigurasi
                                     <span class="text-indigo-600">map</span>
                                 </h1>
@@ -1785,7 +1850,6 @@
                                     <div id="configMap" class="w-full h-full rounded-[2.5rem] relative z-0"></div>
                                 </div>
                             </div>
-
                             <div class="col-span-12 lg:col-span-4 space-y-6">
                                 <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100">
                                     <label
@@ -1803,7 +1867,6 @@
                                             </svg></button>
                                     </div>
                                 </div>
-
                                 <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100 space-y-5">
                                     <div class="grid grid-cols-2 gap-3">
                                         <div class="bg-slate-50/80 p-4 rounded-2xl border border-slate-100"><span
@@ -1886,7 +1949,6 @@
                                 akun</button></div>
                     </div>
                 </div>
-
                 <div x-show="showValidateModal" x-cloak
                     class="fixed inset-0 z-[1200] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
                     <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md p-8">
@@ -1911,7 +1973,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div x-show="showRejectModal" x-cloak
                     class="fixed inset-0 z-[1200] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
                     <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md p-8">
@@ -1932,7 +1993,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div x-show="showCreateForm" x-cloak
                     class="fixed inset-0 z-[1200] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 overflow-y-auto">
                     <div class="bg-white rounded-3xl shadow-2xl w-full max-w-6xl max-h-[90vh] overflow-y-auto">
@@ -1988,7 +2048,7 @@
                                                 x-model="formData.status"
                                                 class="w-full px-4 py-3 bg-slate-50 border rounded-xl text-sm">
                                                 <option value="Baik">🟢 Baik</option>
-                                                <option value="Proses Perbaikan">🟡 Proses</option>
+                                                <option value="proses">🟡 Proses</option>
                                                 <option value="Rusak">🟠 Rusak</option>
                                                 <option value="Kritis">🔴 Kritis</option>
                                             </select></div>
@@ -2017,8 +2077,7 @@
                                                 class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Upload
                                                 foto</label><input type="file" id="fotoInput" accept="image/*"
                                                 class="w-full text-sm file:mr-2 file:py-2 file:px-4 file:rounded-xl file:bg-indigo-600 file:text-white">
-                                            <div x-show="fotoPreview" class="mt-2"><img
-                                                    src="./image/lampu_hasil_perbaikan.png"
+                                            <div x-show="fotoPreview" class="mt-2"><img :src="fotoPreview"
                                                     class="h-28 rounded-xl object-cover"></div>
                                         </div>
                                         <div class="bg-amber-50 p-3 rounded-xl">
@@ -2068,7 +2127,7 @@
         const mapSettings = { latitude: -6.2088, longitude: 106.8456, defaultZoom: 11 };
         const asetData = [
             { id: 1, kategori: "Penerangan Jalan Umum (PJU)", jenis: "Tiang PJU", nama: "PJU Jl. Sudirman 1", alamat: "Jl. Sudirman, Jakarta Pusat", lat: -6.1855, lng: 106.8223, status: "Baik", warna: "#16a34a", icon: "💡" },
-            { id: 2, kategori: "Pengendalian dan Pengawasan", jenis: "CCTV", nama: "CCTV Simpang Harmoni", alamat: "Simpang Harmoni", lat: -6.1792, lng: 106.8175, status: "Proses Perbaikan", warna: "#3b82f6", icon: "📹" },
+            { id: 2, kategori: "Pengendalian dan Pengawasan", jenis: "CCTV", nama: "CCTV Simpang Harmoni", alamat: "Simpang Harmoni", lat: -6.1792, lng: 106.8175, status: "proses", warna: "#3b82f6", icon: "📹" },
             { id: 3, kategori: "Perlengkapan Jalan", jenis: "Rambu", nama: "Rambu Jalan Thamrin", alamat: "Jl. Thamrin", lat: -6.1921, lng: 106.8230, status: "Rusak", warna: "#fbbf24", icon: "🛑" },
             { id: 4, kategori: "Fasilitas Lalu Lintas", jenis: "APILL", nama: "APILL Pancoran", alamat: "Simpang Pancoran", lat: -6.2463, lng: 106.8086, status: "Kritis", warna: "#dc2626", icon: "🚦" },
             { id: 5, kategori: "Prasarana Transportasi", jenis: "Halte", nama: "Halte Kuningan", alamat: "Jl. Kuningan", lat: -6.2324, lng: 106.8237, status: "Baik", warna: "#16a34a", icon: "🚏" }
@@ -2076,7 +2135,7 @@
         const sidebarCats = [{ kategori: "Penerangan Jalan Umum (PJU)", warna: "#10b981", total_jenis: 2 }, { kategori: "Perlengkapan Jalan", warna: "#f59e0b", total_jenis: 1 }, { kategori: "Fasilitas Lalu Lintas", warna: "#ef4444", total_jenis: 1 }, { kategori: "Pengendalian dan Pengawasan", warna: "#3b82f6", total_jenis: 1 }, { kategori: "Prasarana Transportasi", warna: "#8b5cf6", total_jenis: 1 }];
         let dashboardKat = 'all', dashboardJenis = 'all', dashboardSta = 'all', dashboardSearch = '';
         function createMarkerIcon(w, icon) { return L.divIcon({ html: `<div class="relative flex items-center justify-center w-10 h-10 bg-white rounded-full shadow-lg border-2" style="border-color:${w}"><span class="text-xl">${icon}</span><div class="absolute -bottom-1 w-3 h-3 rotate-45 border-r-2 border-b-2 bg-white" style="border-color:${w}"></div></div>`, className: '', iconSize: [40, 40], iconAnchor: [20, 40], popupAnchor: [0, -40] }); }
-        function renderDashboardMap() { if (!dashboardMarkerCluster) return; dashboardMarkerCluster.clearLayers(); let stats = { total: 0, baik: 0, rusak: 0, kritis: 0, proses: 0 }; asetData.forEach(a => { const matchKat = (dashboardKat === 'all' || a.kategori === dashboardKat); const matchJenis = (dashboardJenis === 'all' || a.jenis === dashboardJenis); const matchSta = (dashboardSta === 'all' || a.status === dashboardSta); const matchSearch = (dashboardSearch === '' || `${a.nama} ${a.alamat}`.toLowerCase().includes(dashboardSearch.toLowerCase())); if (matchKat && matchJenis) { if (a.status === 'Baik') stats.baik++; else if (a.status === 'Rusak') stats.rusak++; else if (a.status === 'Kritis') stats.kritis++; else if (a.status === 'Proses Perbaikan') stats.proses++; stats.total++; if (matchSta && matchSearch) { const m = L.marker([a.lat, a.lng], { icon: createMarkerIcon(a.warna, a.icon) }); m.bindPopup(`<div class="p-4"><h4 class="font-black text-xs">${a.nama}</h4><p class="text-[9px] text-slate-500">${a.alamat}</p><div class="mt-2"><span class="px-2 py-1 rounded-full text-[8px] font-black" style="background:${a.warna}20; color:${a.warna}">${a.status}</span></div></div>`, { className: 'custom-leaflet-popup' }); dashboardMarkerCluster.addLayer(m); } } }); document.getElementById('statTotalGlobal').innerText = stats.total; document.getElementById('statBaikVal').innerText = stats.baik; document.getElementById('statRusakVal').innerText = stats.rusak; document.getElementById('statKritisVal').innerText = stats.kritis; document.getElementById('statProsesVal').innerText = stats.proses; }
+        function renderDashboardMap() { if (!dashboardMarkerCluster) return; dashboardMarkerCluster.clearLayers(); let stats = { total: 0, baik: 0, rusak: 0, kritis: 0, proses: 0 }; asetData.forEach(a => { const matchKat = (dashboardKat === 'all' || a.kategori === dashboardKat); const matchJenis = (dashboardJenis === 'all' || a.jenis === dashboardJenis); const matchSta = (dashboardSta === 'all' || a.status === dashboardSta); const matchSearch = (dashboardSearch === '' || `${a.nama} ${a.alamat}`.toLowerCase().includes(dashboardSearch.toLowerCase())); if (matchKat && matchJenis) { if (a.status === 'Baik') stats.baik++; else if (a.status === 'Rusak') stats.rusak++; else if (a.status === 'Kritis') stats.kritis++; else if (a.status === 'proses') stats.proses++; stats.total++; if (matchSta && matchSearch) { const m = L.marker([a.lat, a.lng], { icon: createMarkerIcon(a.warna, a.icon) }); m.bindPopup(`<div class="p-4"><h4 class="font-black text-xs">${a.nama}</h4><p class="text-[9px] text-slate-500">${a.alamat}</p><div class="mt-2"><span class="px-2 py-1 rounded-full text-[8px] font-black" style="background:${a.warna}20; color:${a.warna}">${a.status}</span></div></div>`, { className: 'custom-leaflet-popup' }); dashboardMarkerCluster.addLayer(m); } } }); document.getElementById('statTotalGlobal').innerText = stats.total; document.getElementById('statBaikVal').innerText = stats.baik; document.getElementById('statRusakVal').innerText = stats.rusak; document.getElementById('statKritisVal').innerText = stats.kritis; document.getElementById('statProsesVal').innerText = stats.proses; }
         function renderDashboardCategories() { const c = document.getElementById('listContent'); document.getElementById('listBreadcrumb').classList.add('hidden'); c.innerHTML = sidebarCats.map(cat => `<div onclick="selectDashboardCategory('${cat.kategori}')" class="flex justify-between items-center p-3 hover:bg-white rounded-xl cursor-pointer"><div class="flex gap-3"><span class="cat-bullet" style="background-color:${cat.warna}"></span><span class="text-[11px] font-black">${cat.kategori}</span></div><span class="text-[9px] font-bold text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">${cat.total_jenis} jenis</span></div>`).join(''); }
         window.selectDashboardCategory = (catName) => { dashboardKat = catName; document.getElementById('listBreadcrumb').classList.remove('hidden'); document.getElementById('currentCategoryTitle').innerText = catName; const filtered = asetData.filter(a => a.kategori === catName); const jenisList = [...new Map(filtered.map(a => [a.jenis, a])).values()]; document.getElementById('listContent').innerHTML = jenisList.map(j => `<div onclick="selectDashboardJenis('${j.jenis}')" class="flex justify-between p-3 hover:bg-white rounded-xl cursor-pointer"><span class="text-[11px] font-bold">${j.jenis}</span><span class="bg-gray-100 px-2 py-0.5 rounded text-[10px] font-black">${filtered.filter(a => a.jenis === j.jenis).length}</span></div>`).join(''); renderDashboardMap(); };
         window.selectDashboardJenis = (jenisName) => { dashboardJenis = jenisName; renderDashboardMap(); };

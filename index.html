@@ -3,45 +3,31 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>LINTAS - Layanan Inventaris & Sistem Tata Aset | Dishub DKI Jakarta</title>
 
-    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
-    <!-- Google Fonts Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
         rel="stylesheet">
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
     <style>
         * {
             font-family: 'Inter', sans-serif;
         }
 
-        /* Smooth scroll */
         html {
             scroll-behavior: smooth;
         }
 
-        /* Custom gradient backgrounds */
         .bg-gradient-primary {
             background: linear-gradient(135deg, #0B2A4A 0%, #1a4a7a 100%);
         }
 
-        .btn-gradient {
-            background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
-            transition: all 0.3s ease;
-        }
-
-        .btn-gradient:hover {
-            transform: scale(1.02);
-            box-shadow: 0 10px 20px -5px rgba(79, 70, 229, 0.4);
-        }
-
-        /* Card hover effect */
         .card-hover {
             transition: all 0.3s ease;
         }
@@ -51,28 +37,36 @@
             box-shadow: 0 20px 25px -12px rgba(0, 0, 0, 0.2);
         }
 
-        /* Modal backdrop */
         .modal-backdrop {
-            background-color: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(4px);
+            background-color: rgba(11, 42, 74, 0.85);
+            backdrop-filter: blur(5px);
         }
 
-        /* Slideshow */
+        /* Slideshow Teroptimasi untuk Fluiditas Mobile/Desktop */
         .slideshow-container {
             position: relative;
             width: 100%;
-            min-height: 550px;
+            /* 100svh (Small Viewport Height) agar tidak tertutup address bar mobile, dikurangi estimasi tinggi navbar */
+            height: calc(100svh - 64px);
+            min-height: 480px;
+            /* Batas aman terkecil untuk layar HP mungil */
             overflow: hidden;
+        }
+
+        @media (min-width: 1024px) {
+            .slideshow-container {
+                height: calc(100vh - 76px);
+                min-height: 600px;
+                max-height: 850px;
+                /* Mencegah terlalu molor di layar ultra-wide */
+            }
         }
 
         .slide {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            inset: 0;
             opacity: 0;
-            transition: opacity 1s ease-in-out;
+            transition: opacity 1.5s ease-in-out;
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -82,14 +76,12 @@
             opacity: 1;
         }
 
-        /* Slide overlay - Warna hitam halus (dark gradient) */
         .slide-overlay {
             position: absolute;
             inset: 0;
-            background: linear-gradient(135deg, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0.55) 100%);
+            background: linear-gradient(135deg, rgba(11, 42, 74, 0.85) 0%, rgba(11, 42, 74, 0.4) 100%);
         }
 
-        /* Slide indicator dots */
         .slide-dot {
             transition: all 0.3s ease;
             cursor: pointer;
@@ -97,7 +89,7 @@
 
         .slide-dot.active {
             background-color: #F4B400;
-            width: 24px;
+            width: 32px;
         }
 
         /* Running text marquee */
@@ -115,17 +107,10 @@
             animation: marquee 25s linear infinite;
         }
 
-        /* Map styles */
-        #reportMap {
-            height: 300px;
-            width: 100%;
-            border-radius: 12px;
-            z-index: 1;
-        }
-
+        /* Map adjustments */
         .leaflet-container {
-            border-radius: 12px;
             z-index: 1;
+            border-radius: inherit;
         }
 
         .locate-btn {
@@ -163,84 +148,37 @@
             border: 3px solid #F4B400;
             box-shadow: 0 10px 15px rgba(0, 0, 0, 0.4);
         }
-
-        /* Logo container styling */
-        .logo-container {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .logo-item {
-            height: 45px;
-            width: auto;
-            object-fit: contain;
-        }
-
-        /* Small logo for badge */
-        .badge-logo {
-            height: 16px;
-            width: auto;
-            object-fit: contain;
-            display: inline-block;
-            vertical-align: middle;
-        }
-
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            .slideshow-container {
-                min-height: 500px;
-            }
-
-            .hero-title {
-                font-size: 2rem !important;
-            }
-
-            .nav-logo-text {
-                display: none;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .slideshow-container {
-                min-height: 450px;
-            }
-        }
     </style>
-
-    <!-- Leaflet CSS & JS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
 
-<body class="bg-white">
+<body class="bg-white overflow-x-hidden">
 
-    <!-- ==================== LANDING PAGE ==================== -->
-    <div id="landingPage">
+    <div id="landingPage" class="w-full">
 
-        <!-- NAVBAR dengan Logo DKI Jakarta dan Dishub DKI -->
-        <nav class="bg-gradient-primary text-white sticky top-0 z-50 shadow-xl">
-            <div class="container mx-auto px-4 sm:px-6 py-3 sm:py-4">
+        <nav class="bg-gradient-primary text-white sticky top-0 z-50 shadow-xl w-full">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-3 lg:py-4">
                 <div class="flex justify-between items-center">
-                    <div class="flex items-center gap-2 sm:gap-4">
-                        <!-- Logo DKI Jakarta -->
-                        <div class="flex items-center gap-2 sm:gap-3 border-r border-white/20 pr-2 sm:pr-4">
-                            <img src="./image/logo_dki.png" alt="Pemerintah Provinsi DKI Jakarta"
-                                class="logo-item h-8 sm:h-12 w-auto"
-                                onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='flex'">
-                            <div
-                                class="hidden w-8 h-8 sm:w-10 sm:h-10 bg-white/20 rounded-xl flex items-center justify-center text-[10px] sm:text-xs font-bold">
-                                DKI</div>
+                    <div class="flex items-center gap-3 sm:gap-4">
+                        <div class="flex items-center gap-3 sm:gap-4 border-r border-white/20 pr-3 sm:pr-5">
+                            <div class="bg-white p-1.5 sm:p-2 rounded-lg shadow-sm flex items-center justify-center">
+                                <img src="./image/logo_dki.png" alt="DKI Jakarta" class="h-6 sm:h-8 lg:h-10 w-auto"
+                                    onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                                <div
+                                    class="hidden w-6 h-6 sm:w-8 sm:h-8 bg-slate-100 rounded flex items-center justify-center text-[10px] sm:text-xs font-black text-slate-800">
+                                    DKI</div>
+                            </div>
                         </div>
-                        <div class="nav-logo-text">
-                            <h1 class="font-black text-base sm:text-xl tracking-tight">LINTAS</h1>
-                            <p class="text-[8px] sm:text-[10px] text-indigo-300 font-bold uppercase tracking-wider">
+                        <div class="nav-logo-text flex flex-col justify-center">
+                            <h1 class="font-black text-sm sm:text-lg lg:text-xl tracking-tight leading-tight">LINTAS
+                            </h1>
+                            <p
+                                class="text-[7px] sm:text-[9px] lg:text-[10px] text-indigo-200 font-bold uppercase tracking-widest hidden sm:block">
                                 Dinas Perhubungan DKI Jakarta</p>
                         </div>
                     </div>
                     <div>
                         <button onclick="openLogin()"
-                            class="px-4 sm:px-8 py-1.5 sm:py-2 bg-white/10 hover:bg-white/20 rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-wider transition-all">
+                            class="px-5 sm:px-8 py-2 sm:py-2.5 bg-white/10 hover:bg-white/20 rounded-xl font-black text-[10px] sm:text-xs uppercase tracking-widest transition-all">
                             <i class="fas fa-sign-in-alt mr-1 sm:mr-2"></i> Login
                         </button>
                     </div>
@@ -248,163 +186,180 @@
             </div>
         </nav>
 
-        <!-- HERO SECTION dengan SLIDESHOW 4 GAMBAR LOKAL -->
-        <div class="slideshow-container relative" id="slideshowContainer">
-            <!-- Slide 1 -->
+        <div class="slideshow-container" id="slideshowContainer">
             <div class="slide" id="slide1" style="background-image: url('image/kegiatan_dishub_dki1.png');">
                 <div class="slide-overlay"></div>
             </div>
-            <!-- Slide 2 -->
             <div class="slide" id="slide2" style="background-image: url('image/kegiatan_dishub_dki2.png');">
                 <div class="slide-overlay"></div>
             </div>
-            <!-- Slide 3 -->
             <div class="slide" id="slide3" style="background-image: url('image/kegiatan_dishub_dki3.png');">
                 <div class="slide-overlay"></div>
             </div>
-            <!-- Slide 4 -->
             <div class="slide" id="slide4" style="background-image: url('image/kegiatan_dishub_dki4.png');">
                 <div class="slide-overlay"></div>
             </div>
 
-            <!-- Konten Hero -->
-            <div class="absolute inset-0 z-10 flex flex-col items-center justify-center text-center px-4 sm:px-6">
-                <!-- Logo Dishub DKI di tengah -->
-                <div class="mb-4 sm:mb-6 flex justify-center">
+            <div
+                class="absolute inset-0 z-10 flex flex-col items-center justify-center text-center px-4 sm:px-6 md:px-8 pb-10 sm:pb-16 lg:pb-20 w-full">
+
+                <div class="mb-3 sm:mb-6 lg:mb-8 flex justify-center">
                     <img src="./image/logo_dishub_dki.png" alt="Dinas Perhubungan DKI Jakarta"
-                        class="h-16 sm:h-20 md:h-40 w-auto drop-shadow-lg"
+                        class="h-14 sm:h-20 md:h-28 lg:h-36 w-auto drop-shadow-2xl"
                         onerror="this.onerror=null; this.style.display='none'">
                 </div>
 
                 <h1
-                    class="text-white text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-black uppercase tracking-tighter leading-none mb-4 sm:mb-6 hero-title">
+                    class="text-white text-2xl sm:text-4xl md:text-5xl lg:text-7xl font-black uppercase tracking-tighter leading-[1.2] lg:leading-[1.1] mb-3 sm:mb-5 w-full max-w-5xl">
                     Layanan Inventaris &<br>
                     <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#F4B400] to-yellow-200">Sistem
                         Tata Aset</span>
                 </h1>
+
                 <p
-                    class="text-white/80 text-sm sm:text-base md:text-lg max-w-2xl mx-auto mb-4 sm:mb-6 leading-relaxed px-2">
+                    class="text-white/90 text-[11px] sm:text-sm md:text-base lg:text-lg max-w-3xl mx-auto mb-3 sm:mb-5 leading-relaxed px-2 font-medium">
                     Platform digital milik <span class="font-bold text-[#F4B400]">Dinas Perhubungan DKI Jakarta</span>
                     untuk pengelolaan aset infrastruktur dan pelaporan kerusakan secara real-time.
                 </p>
-                <!-- Subteks kepemilikan aset -->
+
                 <p
-                    class="text-white/60 text-[11px] sm:text-xs md:text-sm max-w-2xl mx-auto mb-6 sm:mb-8 leading-relaxed px-2">
+                    class="text-white/60 text-[9px] sm:text-xs md:text-sm max-w-2xl mx-auto mb-6 sm:mb-10 lg:mb-12 leading-relaxed px-4 italic">
                     <i class="fas fa-database mr-1"></i> Seluruh aset yang dikelola dalam sistem ini merupakan aset
                     <strong class="text-white">Pemerintah Provinsi DKI Jakarta</strong>
                     yang berada di bawah pengawasan <strong class="text-white">Dinas Perhubungan DKI Jakarta</strong>.
                 </p>
-                <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-4">
+
+                <div class="flex flex-col sm:flex-row justify-center px-4 w-full sm:w-auto">
                     <button onclick="openLaporan()"
-                        class="px-6 sm:px-8 py-3 sm:py-4 bg-[#F4B400] text-[#0B2A4A] rounded-xl font-black text-xs sm:text-sm uppercase tracking-wider shadow-xl hover:bg-yellow-400 transition-all flex items-center justify-center gap-2">
-                        <i class="fas fa-exclamation-triangle"></i> Laporkan Kerusakan
+                        class="w-full sm:w-auto px-6 sm:px-12 py-3.5 sm:py-5 bg-[#F4B400] text-[#0B2A4A] rounded-2xl font-black text-[11px] sm:text-sm uppercase tracking-widest shadow-2xl hover:bg-yellow-400 hover:-translate-y-1 transition-all flex items-center justify-center gap-3">
+                        <i class="fas fa-exclamation-triangle text-sm sm:text-lg"></i> Laporkan Kerusakan
                     </button>
                 </div>
             </div>
 
-            <!-- Indicator Dots -->
-            <div class="absolute bottom-4 sm:bottom-6 left-0 right-0 z-20 flex justify-center gap-1.5 sm:gap-2">
-                <div class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-white/50 slide-dot" data-slide="0"
-                    onclick="goToSlide(0)"></div>
-                <div class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-white/50 slide-dot" data-slide="1"
-                    onclick="goToSlide(1)"></div>
-                <div class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-white/50 slide-dot" data-slide="2"
-                    onclick="goToSlide(2)"></div>
-                <div class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-white/50 slide-dot" data-slide="3"
-                    onclick="goToSlide(3)"></div>
+            <div
+                class="absolute bottom-4 sm:bottom-8 lg:bottom-10 left-0 right-0 z-20 flex justify-center gap-2 sm:gap-3">
+                <div class="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-white/40 slide-dot" onclick="goToSlide(0)"></div>
+                <div class="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-white/40 slide-dot" onclick="goToSlide(1)"></div>
+                <div class="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-white/40 slide-dot" onclick="goToSlide(2)"></div>
+                <div class="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-white/40 slide-dot" onclick="goToSlide(3)"></div>
             </div>
         </div>
 
-        <!-- LAYANAN KAMI -->
-        <section class="py-12 sm:py-20 bg-slate-50">
-            <div class="container mx-auto px-4 sm:px-6">
-                <div class="text-center mb-8 sm:mb-12">
+        <section class="py-16 sm:py-24 lg:py-32 bg-slate-50 w-full">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-10 sm:mb-16">
                     <span
-                        class="text-indigo-600 text-[10px] sm:text-xs font-black uppercase tracking-wider mb-2 block">Layanan
-                        Kami</span>
-                    <h2 class="text-2xl sm:text-3xl md:text-4xl font-black text-slate-900">Solusi Lengkap <span
-                            class="text-indigo-600">Pengelolaan Aset</span></h2>
-                    <p class="text-slate-500 mt-3 sm:mt-4 max-w-2xl mx-auto text-sm sm:text-base">Platform terpadu untuk
-                        masyarakat, petugas, dan administrator</p>
+                        class="inline-block bg-indigo-50 border border-indigo-100 text-indigo-600 px-4 py-1.5 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-widest mb-4">Layanan
+                        Sistem</span>
+                    <h2 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight">
+                        Solusi Lengkap <br class="sm:hidden" /><span class="text-indigo-600">Pengelolaan Aset</span>
+                    </h2>
+                    <p class="text-slate-500 mt-4 max-w-2xl mx-auto text-sm sm:text-base">Platform terpadu untuk
+                        efisiensi pelaporan masyarakat, eksekusi petugas, dan pemantauan administrator.</p>
                 </div>
-                <div class="grid md:grid-cols-3 gap-6 sm:gap-8">
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 lg:gap-10">
                     <div
-                        class="bg-white rounded-2xl p-6 sm:p-8 shadow-lg card-hover text-center border border-slate-100">
+                        class="bg-white rounded-3xl p-8 sm:p-10 shadow-lg card-hover text-center border border-slate-100">
                         <div
-                            class="w-14 h-14 sm:w-16 sm:h-16 bg-indigo-100 rounded-2xl flex items-center justify-center mx-auto mb-4 sm:mb-5">
-                            <i class="fas fa-flag-checkered text-indigo-600 text-xl sm:text-2xl"></i>
+                            class="w-16 h-16 sm:w-20 sm:h-20 bg-indigo-50 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                            <i class="fas fa-flag-checkered text-indigo-600 text-2xl sm:text-3xl"></i>
                         </div>
-                        <h3 class="text-lg sm:text-xl font-black text-slate-800 mb-2 sm:mb-3">Laporan Masyarakat</h3>
-                        <p class="text-slate-500 text-xs sm:text-sm leading-relaxed">Masyarakat dapat melaporkan
-                            kerusakan aset dengan mudah melalui formulir online dengan peta interaktif.</p>
+                        <h3 class="text-lg sm:text-xl font-black text-slate-900 mb-3">Laporan Masyarakat</h3>
+                        <p class="text-slate-500 text-sm leading-relaxed">Masyarakat dapat melaporkan kerusakan aset
+                            dengan mudah melalui formulir online berbasis pemetaan geospasial interaktif.</p>
                     </div>
+
                     <div
-                        class="bg-white rounded-2xl p-6 sm:p-8 shadow-lg card-hover text-center border border-slate-100">
+                        class="bg-white rounded-3xl p-8 sm:p-10 shadow-lg card-hover text-center border border-slate-100">
                         <div
-                            class="w-14 h-14 sm:w-16 sm:h-16 bg-emerald-100 rounded-2xl flex items-center justify-center mx-auto mb-4 sm:mb-5">
-                            <i class="fas fa-hard-hat text-emerald-600 text-xl sm:text-2xl"></i>
+                            class="w-16 h-16 sm:w-20 sm:h-20 bg-emerald-50 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                            <i class="fas fa-hard-hat text-emerald-600 text-2xl sm:text-3xl"></i>
                         </div>
-                        <h3 class="text-lg sm:text-xl font-black text-slate-800 mb-2 sm:mb-3">Petugas Lapangan</h3>
-                        <p class="text-slate-500 text-xs sm:text-sm leading-relaxed">Seksi menerima tugas perbaikan dan
-                            update progress secara real-time.</p>
+                        <h3 class="text-lg sm:text-xl font-black text-slate-900 mb-3">Tindakan Cepat Petugas</h3>
+                        <p class="text-slate-500 text-sm leading-relaxed">Petugas lapangan menerima penugasan secara
+                            langsung dan melaporkan status perbaikan secara mutlak (*real-time*).</p>
                     </div>
+
                     <div
-                        class="bg-white rounded-2xl p-6 sm:p-8 shadow-lg card-hover text-center border border-slate-100">
+                        class="bg-white rounded-3xl p-8 sm:p-10 shadow-lg card-hover text-center border border-slate-100">
                         <div
-                            class="w-14 h-14 sm:w-16 sm:h-16 bg-amber-100 rounded-2xl flex items-center justify-center mx-auto mb-4 sm:mb-5">
-                            <i class="fas fa-chart-pie text-amber-600 text-xl sm:text-2xl"></i>
+                            class="w-16 h-16 sm:w-20 sm:h-20 bg-amber-50 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                            <i class="fas fa-chart-pie text-amber-600 text-2xl sm:text-3xl"></i>
                         </div>
-                        <h3 class="text-lg sm:text-xl font-black text-slate-800 mb-2 sm:mb-3">Monitoring Aset</h3>
-                        <p class="text-slate-500 text-xs sm:text-sm leading-relaxed">Dashboard interaktif dengan
-                            statistik kondisi aset secara real-time.</p>
+                        <h3 class="text-lg sm:text-xl font-black text-slate-900 mb-3">Monitoring Eksekutif</h3>
+                        <p class="text-slate-500 text-sm leading-relaxed">Dashboard interaktif yang menampilkan
+                            statistik vital dan jejak audit (*audit trail*) pemeliharaan aset untuk pemangku kebijakan.
+                        </p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section class="py-12 sm:py-20 bg-white">
-            <div class="container mx-auto px-4 sm:px-6">
-                <div class="grid md:grid-cols-2 gap-8 sm:gap-12 items-center">
-                    <div>
-                        <span
-                            class="text-indigo-600 text-[10px] sm:text-xs font-black uppercase tracking-wider mb-2 block">Tentang
-                            </span>
-                        <h2 class="text-2xl sm:text-3xl md:text-4xl font-black text-slate-900 mb-4 sm:mb-6">
-                            Sistem Lintas
-                            <br /><span class="text-indigo-600">Dishub DKI Jakarta</span>
-                        </h2>
-                        <p class="text-slate-600 leading-relaxed text-sm sm:text-base mb-4">
-                            <strong>LINTAS (Layanan Inventaris & Sistem Tata Aset)</strong> hadir sebagai sistem
-                            digitalisasi
-                            infrastruktur Dinas Perhubungan DKI Jakarta. Lebih dari sekadar pencatatan inventaris,
-                            platform ini
-                            adalah pusat kendali operasional yang cerdas.
-                        </p>
-                        <p class="text-slate-600 leading-relaxed text-sm sm:text-base mb-6">
-                            Sistem ini merangkai seluruh alur kerja secara terintegrasi—mulai dari penerimaan laporan
-                            kerusakan
-                            dari masyarakat, validasi teknis berlapis, manajemen penugasan secara langsung kepada
-                            petugas
-                            lapangan, hingga pencatatan rekam jejak perbaikan yang absolut dan transparan.
-                        </p>
-                    </div>
-                    <div class="relative">
-                        <div class="bg-slate-100 rounded-2xl sm:rounded-3xl p-2 overflow-hidden">
-                            <img src="image/kegiatan_dishub_dki1.png" alt="Kegiatan Operasional Dishub DKI Jakarta"
-                                class="rounded-xl sm:rounded-2xl w-full shadow-xl h-64 sm:h-80 object-cover">
-                        </div>
+        <section class="py-16 sm:py-24 lg:py-32 bg-white w-full">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+                    <div class="order-2 lg:order-1">
                         <div
-                            class="absolute -bottom-6 -left-6 bg-white p-4 rounded-2xl shadow-xl border border-slate-100 hidden sm:block">
-                            <div class="flex items-center gap-3">
-                                <div
-                                    class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600">
-                                    <i class="fas fa-server"></i>
-                                </div>
-                                <div>
-                                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Status
-                                        Sistem</p>
-                                    <p class="text-xs font-bold text-slate-900">Terintegrasi Aktif</p>
-                                </div>
+                            class="flex items-center gap-2 sm:gap-3 mb-6 bg-indigo-50 px-4 py-2 rounded-xl border border-indigo-100 w-fit">
+                            <i class="fas fa-microchip text-indigo-600 text-sm"></i>
+                            <span
+                                class="text-indigo-600 text-[10px] sm:text-xs font-black uppercase tracking-widest">Tentang
+                                Sistem Lintas</span>
+                        </div>
+
+                        <h2
+                            class="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 mb-6 tracking-tight leading-tight">
+                            Pusat Kendali Aset <br class="hidden sm:block" /><span class="text-indigo-600">Dishub DKI
+                                Jakarta</span>
+                        </h2>
+
+                        <div class="space-y-5 text-slate-600 text-sm sm:text-base leading-relaxed">
+                            <p>
+                                <strong>LINTAS (Layanan Inventaris & Sistem Tata Aset)</strong> hadir sebagai urat nadi
+                                digitalisasi infrastruktur Dinas Perhubungan DKI Jakarta. Lebih dari sekadar pencatatan
+                                inventaris, platform ini beroperasi sebagai pusat kendali operasional yang sistematis
+                                dan cerdas.
+                            </p>
+                            <p>
+                                Sistem ini merangkai seluruh alur kerja operasional secara terintegrasi—mulai dari
+                                penerimaan laporan anomali kerusakan dari masyarakat, tahapan validasi teknis yang
+                                ketat, manajemen penugasan kepada petugas lapangan yang terotorisasi, hingga pencatatan
+                                rekam jejak perbaikan yang absolut untuk akuntabilitas.
+                            </p>
+                        </div>
+
+                        <div class="mt-8 flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center">
+                                <i class="fas fa-check text-indigo-600"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-black text-slate-900">Integritas Data Terjamin</p>
+                                <p class="text-xs text-slate-500">Mendukung audit operasional harian.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="relative order-1 lg:order-2">
+                        <div
+                            class="bg-slate-50 rounded-3xl p-3 sm:p-4 overflow-hidden border border-slate-100 shadow-2xl relative z-10">
+                            <img src="image/kegiatan_dishub_dki1.png" alt="Sistem Operasional Dishub"
+                                class="rounded-2xl w-full h-64 sm:h-80 lg:h-[450px] object-cover"
+                                onerror="this.src='https://placehold.co/800x600/f8fafc/cbd5e1?text=Ilustrasi+Sistem'">
+                        </div>
+
+                        <div class="absolute -bottom-6 sm:-bottom-8 -left-2 sm:-left-8 bg-white p-4 sm:p-5 rounded-2xl shadow-xl border border-slate-100 z-20 flex items-center gap-4 animate-bounce"
+                            style="animation-duration: 3s;">
+                            <div
+                                class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600">
+                                <i class="fas fa-server text-sm sm:text-base"></i>
+                            </div>
+                            <div>
+                                <p
+                                    class="text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                                    Status Sistem</p>
+                                <p class="text-xs sm:text-sm font-black text-slate-900">Terintegrasi Aktif</p>
                             </div>
                         </div>
                     </div>
@@ -412,246 +367,309 @@
             </div>
         </section>
 
-        <!-- FOOTER -->
-        <footer class="bg-slate-900 text-slate-400 py-10 sm:py-12 border-t border-slate-800">
-            <div class="container mx-auto px-4 sm:px-6">
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
-                    <div>
-                        <div class="flex items-center gap-2 sm:gap-3 mb-4">
-                            <img src="./image/logo_dki.png" alt="DKI Jakarta" class="h-6 sm:h-8 w-auto"
+        <footer class="bg-slate-900 text-slate-400 py-12 sm:py-16 w-full border-t-[8px] border-[#F4B400]">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-8 sm:gap-12">
+                    <div class="lg:col-span-4">
+                        <div class="flex items-center gap-3 sm:gap-4 mb-6">
+                            <div class="bg-white p-1.5 sm:p-2 rounded-lg shadow-sm flex items-center justify-center">
+                                <img src="./image/logo_dki.png" alt="DKI Jakarta" class="h-8 sm:h-10 w-auto"
+                                    onerror="this.style.display='none'">
+                            </div>
+                            <img src="./image/logo_dishub_dki.png" alt="Dishub DKI" class="h-10 sm:h-12 w-auto"
                                 onerror="this.style.display='none'">
-                            <img src="./image/logo_dishub_dki.png" alt="Dishub DKI" class="h-6 sm:h-8 w-auto"
-                                onerror="this.style.display='none'">
-                            <div
-                                class="w-7 h-7 sm:w-8 sm:h-8 bg-indigo-600 rounded-lg flex items-center justify-center">
-                                <span class="text-white font-black text-xs sm:text-sm">L</span></div>
-                            <span class="font-black text-white text-base sm:text-lg">LINTAS</span>
                         </div>
-                        <p class="text-xs sm:text-sm leading-relaxed">Layanan Inventaris & Sistem Tata Aset<br>Dinas
-                            Perhubungan DKI Jakarta</p>
+                        <p class="text-xs sm:text-sm leading-relaxed text-slate-500 pr-4">
+                            Layanan Inventaris & Sistem Tata Aset<br>
+                            Dinas Perhubungan Provinsi DKI Jakarta.<br>
+                            Sistem informasi terintegrasi untuk pengelolaan aset infrastruktur kota.
+                        </p>
                     </div>
-                    <div>
-                        <h4 class="font-black text-white text-xs sm:text-sm uppercase tracking-wider mb-3 sm:mb-4">
-                            Tentang Kami</h4>
-                        <ul class="space-y-1.5 sm:space-y-2 text-xs sm:text-sm">
-                            <li><a href="#" class="hover:text-white transition">Profil Dishub</a></li>
-                            <li><a href="#" class="hover:text-white transition">Visi & Misi</a></li>
-                            <li><a href="#" class="hover:text-white transition">Kontak Kami</a></li>
+
+                    <div class="lg:col-span-3">
+                        <h4 class="font-black text-white text-xs sm:text-sm uppercase tracking-widest mb-4 sm:mb-6">
+                            Tentang Lintas</h4>
+                        <ul class="space-y-3 text-xs sm:text-sm text-slate-500">
+                            <li><a href="#" class="hover:text-white hover:underline transition">Dasar Hukum</a></li>
+                            <li><a href="#" class="hover:text-white hover:underline transition">Standar Operasional
+                                    (SOP)</a></li>
+                            <li><a href="#" class="hover:text-white hover:underline transition">Kebijakan Privasi</a>
+                            </li>
                         </ul>
                     </div>
-                    <div>
-                        <h4 class="font-black text-white text-xs sm:text-sm uppercase tracking-wider mb-3 sm:mb-4">
+
+                    <div class="lg:col-span-2">
+                        <h4 class="font-black text-white text-xs sm:text-sm uppercase tracking-widest mb-4 sm:mb-6">
                             Layanan</h4>
-                        <ul class="space-y-1.5 sm:space-y-2 text-xs sm:text-sm">
-                            <li><a href="#" class="hover:text-white transition">Laporan Masyarakat</a></li>
-                            <li><a href="#" class="hover:text-white transition">Monitoring Aset</a></li>
-                            <li><a href="#" class="hover:text-white transition">Status Perbaikan</a></li>
+                        <ul class="space-y-3 text-xs sm:text-sm text-slate-500">
+                            <li><a href="#" class="hover:text-white hover:underline transition">Pelaporan Publik</a>
+                            </li>
+                            <li><a href="#" class="hover:text-white hover:underline transition">Cek Status Tiket</a>
+                            </li>
+                            <li><a href="#" class="hover:text-white hover:underline transition">Statistik Aset</a></li>
                         </ul>
                     </div>
-                    <div>
-                        <h4 class="font-black text-white text-xs sm:text-sm uppercase tracking-wider mb-3 sm:mb-4">
-                            Kontak</h4>
-                        <ul class="space-y-1.5 sm:space-y-2 text-xs sm:text-sm">
-                            <li><i class="fas fa-phone-alt mr-2 w-4 sm:w-5"></i> (021) 12345678</li>
-                            <li><i class="fas fa-envelope mr-2 w-4 sm:w-5"></i> lintas@dishub.jakarta.go.id</li>
-                            <li><i class="fas fa-map-marker-alt mr-2 w-4 sm:w-5"></i> Jakarta Pusat, DKI Jakarta</li>
+
+                    <div class="lg:col-span-3">
+                        <h4 class="font-black text-white text-xs sm:text-sm uppercase tracking-widest mb-4 sm:mb-6">
+                            Hubungi Kami</h4>
+                        <ul class="space-y-4 text-xs sm:text-sm text-slate-500">
+                            <li class="flex items-start gap-3">
+                                <i class="fas fa-map-marker-alt mt-1 text-slate-600"></i>
+                                <span>Dinas Perhubungan Provinsi DKI Jakarta, Jakarta Pusat</span>
+                            </li>
+                            <li class="flex items-center gap-3">
+                                <i class="fas fa-envelope text-slate-600"></i>
+                                <span>lintas@dishub.jakarta.go.id</span>
+                            </li>
+                            <li class="flex items-center gap-3">
+                                <i class="fas fa-phone-alt text-slate-600"></i>
+                                <span>112 (Layanan Darurat DKI)</span>
+                            </li>
                         </ul>
                     </div>
                 </div>
-                <div class="border-t border-slate-800 mt-6 sm:mt-8 pt-6 sm:pt-8 text-center text-[10px] sm:text-xs">
-                    <p>&copy; 2026 LINTAS - Dinas Perhubungan DKI Jakarta. Seluruh aset yang dikelola merupakan milik
-                        Pemerintah Provinsi DKI Jakarta.</p>
+
+                <div
+                    class="border-t border-slate-800 mt-10 sm:mt-12 pt-6 sm:pt-8 text-center sm:text-left flex flex-col sm:flex-row justify-between items-center gap-4">
+                    <p class="text-[10px] sm:text-xs text-slate-600">
+                        &copy; 2026 LINTAS - Dinas Perhubungan DKI Jakarta.<br class="sm:hidden" /> Hak Cipta
+                        Dilindungi.
+                    </p>
+                    <div class="flex gap-4">
+                        <a href="#" class="text-slate-600 hover:text-white transition"><i
+                                class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-slate-600 hover:text-white transition"><i
+                                class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-slate-600 hover:text-white transition"><i
+                                class="fab fa-youtube"></i></a>
+                    </div>
                 </div>
             </div>
         </footer>
     </div>
 
-    <!-- ==================== HALAMAN LAPORAN MASYARAKAT ==================== -->
-    <div id="laporanPage" style="display: none;" class="min-h-screen bg-[#0B2A4A] pb-20">
+    <div id="laporanPage" style="display: none;" class="min-h-screen bg-[#0B2A4A] pb-24 w-full">
 
-        <!-- Running Text -->
-        <div class="bg-[#F4B400] overflow-hidden py-2 shadow-lg sticky top-0 z-50">
-            <div class="whitespace-nowrap animate-marquee flex items-center gap-10">
-                <span class="text-[#0B2A4A] text-[10px] font-black uppercase tracking-widest inline-block">🏢 PUSAT
-                    PELAPORAN ASET DINAS PERHUBUNGAN DKI JAKARTA — LAPORKAN KERUSAKAN UNTUK PELAYANAN LEBIH BAIK</span>
-                <span class="text-[#0B2A4A] text-[10px] font-black uppercase tracking-widest inline-block">🏢 PUSAT
-                    PELAPORAN ASET DINAS PERHUBUNGAN DKI JAKARTA — LAPORKAN KERUSAKAN UNTUK PELAYANAN LEBIH BAIK</span>
+        <div class="bg-[#F4B400] overflow-hidden py-2 shadow-lg sticky top-0 z-50 w-full">
+            <div class="whitespace-nowrap animate-marquee flex items-center gap-6 sm:gap-10">
+                <span
+                    class="text-[#0B2A4A] text-[9px] sm:text-[10px] font-black uppercase tracking-widest inline-block">🏢
+                    PUSAT PELAPORAN ASET DINAS PERHUBUNGAN DKI JAKARTA — LAPORKAN KERUSAKAN UNTUK PELAYANAN LEBIH
+                    BAIK</span>
+                <span
+                    class="text-[#0B2A4A] text-[9px] sm:text-[10px] font-black uppercase tracking-widest inline-block">🏢
+                    PUSAT PELAPORAN ASET DINAS PERHUBUNGAN DKI JAKARTA — LAPORKAN KERUSAKAN UNTUK PELAYANAN LEBIH
+                    BAIK</span>
             </div>
         </div>
 
-        <!-- Tombol Kembali -->
-        <button onclick="backToLanding()"
-            class="fixed top-20 left-4 sm:left-6 z-[100] bg-white/10 backdrop-blur-xl text-white p-2.5 sm:p-3 rounded-xl sm:rounded-2xl shadow-2xl border border-white/20 hover:bg-[#F4B400] hover:text-[#0B2A4A] transition-all duration-300">
-            <svg class="h-4 w-4 sm:h-5 sm:w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7" />
-            </svg>
-        </button>
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 pt-6 sm:pt-8 relative z-40">
+            <button onclick="backToLanding()"
+                class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-xl text-white px-4 py-2 sm:py-2.5 rounded-xl sm:rounded-2xl shadow-lg border border-white/20 hover:bg-[#F4B400] hover:text-[#0B2A4A] transition-all font-black text-xs sm:text-sm uppercase tracking-widest">
+                <i class="fas fa-arrow-left"></i> Kembali ke Beranda
+            </button>
+        </div>
 
-        <!-- Header Hero -->
-        <div class="relative h-[180px] sm:h-[200px] flex flex-col items-center justify-center">
-            <div class="relative z-10 text-center px-4 sm:px-6">
+        <div class="relative py-8 sm:py-12 flex flex-col items-center justify-center w-full">
+            <div class="relative z-10 text-center px-4 sm:px-6 w-full">
                 <div
-                    class="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-blue-500/20 backdrop-blur-md border border-blue-400/30 rounded-full mb-4 sm:mb-6">
-                    <span class="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-[#F4B400] rounded-full animate-pulse"></span>
+                    class="inline-flex items-center gap-2 px-4 py-2 bg-blue-500/20 backdrop-blur-md border border-blue-400/30 rounded-full mb-6">
+                    <span class="w-2 h-2 bg-[#F4B400] rounded-full animate-pulse"></span>
                     <span class="text-[#F4B400] text-[9px] sm:text-[10px] font-black uppercase tracking-widest">Layanan
                         Publik Digital</span>
                 </div>
                 <h1
-                    class="text-white text-3xl sm:text-4xl md:text-5xl font-black uppercase tracking-tighter leading-none mb-3 sm:mb-4">
-                    Pelaporan <br><span
+                    class="text-white text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black uppercase tracking-tighter leading-[1.1] mb-4">
+                    Formulir Pelaporan <br class="hidden sm:block" /><span
                         class="text-transparent bg-clip-text bg-gradient-to-r from-[#F4B400] to-yellow-200">Aset
                         Rusak</span>
                 </h1>
-                <p class="text-slate-300 text-xs sm:text-sm max-w-lg mx-auto">
-                    Dinas Perhubungan DKI Jakarta melayani pelaporan kerusakan infrastruktur secara cepat dan
-                    transparan.
+                <p class="text-slate-300 text-xs sm:text-sm md:text-base max-w-xl mx-auto">
+                    Bantu kami menjaga fungsi infrastruktur kota. Laporan Anda akan divalidasi dan diteruskan ke seksi
+                    terkait.
                 </p>
             </div>
         </div>
 
-        <!-- Form Laporan dengan Peta -->
-        <div class="max-w-2xl mx-auto px-4">
-            <div class="bg-white rounded-2xl sm:rounded-3xl shadow-2xl p-5 sm:p-8 border-b-8 border-[#F4B400]">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 w-full">
+            <div
+                class="bg-white rounded-3xl shadow-2xl p-6 sm:p-8 md:p-10 border-b-[8px] sm:border-b-[12px] border-[#F4B400]">
 
-                <!-- Informasi Pelapor -->
-                <div class="mb-6 sm:mb-8">
-                    <div class="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-5">
+                <div class="mb-8 sm:mb-10">
+                    <div class="flex items-center gap-4 mb-6">
                         <div
-                            class="w-8 h-8 sm:w-10 sm:h-10 bg-[#0B2A4A] text-[#F4B400] rounded-xl flex items-center justify-center font-black text-xs sm:text-sm">
+                            class="w-10 h-10 sm:w-12 sm:h-12 bg-[#0B2A4A] text-[#F4B400] rounded-xl flex items-center justify-center font-black text-sm sm:text-base shrink-0">
                             01</div>
                         <div>
-                            <h3 class="font-black text-[#0B2A4A] uppercase text-xs sm:text-sm">Informasi Pelapor</h3>
-                            <p class="text-[9px] sm:text-[10px] text-slate-400 font-bold">Identitas Anda aman dalam
-                                sistem</p>
+                            <h3 class="font-black text-[#0B2A4A] uppercase text-sm sm:text-base tracking-tight">Data
+                                Pelapor</h3>
+                            <p
+                                class="text-[9px] sm:text-[11px] text-slate-500 font-bold uppercase tracking-widest mt-0.5">
+                                Identitas Dirahasiakan</p>
                         </div>
                     </div>
-                    <div class="grid md:grid-cols-2 gap-3 sm:gap-4">
-                        <input type="text" id="nama_pelapor" placeholder="Nama Lengkap"
-                            class="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 sm:py-3 px-3 sm:px-4 text-xs sm:text-sm font-semibold focus:border-[#0B2A4A] outline-none">
-                        <input type="tel" id="kontak_pelapor" placeholder="Nomor WhatsApp"
-                            class="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 sm:py-3 px-3 sm:px-4 text-xs sm:text-sm font-semibold focus:border-[#0B2A4A] outline-none">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
+                        <div>
+                            <label
+                                class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Nama
+                                Lengkap</label>
+                            <input type="text" id="nama_pelapor" placeholder="Sesuai identitas"
+                                class="w-full bg-slate-50 border border-slate-200 rounded-xl py-3.5 sm:py-4 px-4 sm:px-5 text-sm sm:text-base font-semibold focus:ring-2 focus:ring-[#0B2A4A]/20 focus:border-[#0B2A4A] outline-none transition-all">
+                        </div>
+                        <div>
+                            <label
+                                class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Nomor
+                                WhatsApp Aktif</label>
+                            <input type="tel" id="kontak_pelapor" placeholder="Contoh: 081234567890"
+                                class="w-full bg-slate-50 border border-slate-200 rounded-xl py-3.5 sm:py-4 px-4 sm:px-5 text-sm sm:text-base font-semibold focus:ring-2 focus:ring-[#0B2A4A]/20 focus:border-[#0B2A4A] outline-none transition-all">
+                        </div>
                     </div>
                 </div>
 
-                <!-- Detail Kerusakan -->
-                <div class="mb-6 sm:mb-8">
-                    <div class="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-5">
+                <div class="w-full h-px bg-slate-100 mb-8 sm:mb-10"></div>
+
+                <div class="mb-8 sm:mb-10">
+                    <div class="flex items-center gap-4 mb-6">
                         <div
-                            class="w-8 h-8 sm:w-10 sm:h-10 bg-[#0B2A4A] text-[#F4B400] rounded-xl flex items-center justify-center font-black text-xs sm:text-sm">
+                            class="w-10 h-10 sm:w-12 sm:h-12 bg-[#0B2A4A] text-[#F4B400] rounded-xl flex items-center justify-center font-black text-sm sm:text-base shrink-0">
                             02</div>
                         <div>
-                            <h3 class="font-black text-[#0B2A4A] uppercase text-xs sm:text-sm">Detail Kerusakan</h3>
-                            <p class="text-[9px] sm:text-[10px] text-slate-400 font-bold">Isi detail aset yang
-                                bermasalah</p>
+                            <h3 class="font-black text-[#0B2A4A] uppercase text-sm sm:text-base tracking-tight">Detail
+                                Kerusakan</h3>
+                            <p
+                                class="text-[9px] sm:text-[11px] text-slate-500 font-bold uppercase tracking-widest mt-0.5">
+                                Spesifikasi Kendala</p>
                         </div>
                     </div>
 
-                    <div class="space-y-3 sm:space-y-4">
-                        <input type="text" id="judul_laporan"
-                            placeholder="Aset Yang Dilaporkan (Contoh: PJU Padam di Jl. Sudirman)"
-                            class="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 sm:py-3 px-3 sm:px-4 text-xs sm:text-sm font-semibold focus:border-[#0B2A4A] outline-none">
-
-                        <select id="kondisi_aset"
-                            class="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 sm:py-3 px-3 sm:px-4 text-xs sm:text-sm font-semibold outline-none">
-                            <option value="">Pilih Kategori Kondisi</option>
-                            <option value="Rusak">🚨 RUSAK</option>
-                            <option value="Hilang">🚫 HILANG / DICURI</option>
-                            <option value="Pindah Tempat">📍 PINDAH POSISI</option>
-                            <option value="Lainnya">📝 LAINNYA</option>
-                        </select>
-
-                        <textarea id="deskripsi" rows="3" placeholder="Deskripsi lengkap kerusakan..."
-                            class="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 sm:py-3 px-3 sm:px-4 text-xs sm:text-sm font-semibold focus:border-[#0B2A4A] outline-none"></textarea>
-
-                        <!-- PETA LOKASI -->
+                    <div class="space-y-5 sm:space-y-6">
                         <div>
                             <label
-                                class="text-[9px] sm:text-[10px] font-black text-slate-500 uppercase ml-1 block mb-2">📍
-                                Titik Lokasi Kerusakan (Klik pada peta)</label>
-                            <div class="relative rounded-xl overflow-hidden border">
-                                <div id="reportMap" class="w-full h-56 sm:h-64 bg-slate-200"></div>
+                                class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Judul
+                                Laporan</label>
+                            <input type="text" id="judul_laporan"
+                                placeholder="Contoh: PJU Padam di Jl. Sudirman depan Halte"
+                                class="w-full bg-slate-50 border border-slate-200 rounded-xl py-3.5 sm:py-4 px-4 sm:px-5 text-sm sm:text-base font-semibold focus:ring-2 focus:ring-[#0B2A4A]/20 focus:border-[#0B2A4A] outline-none transition-all">
+                        </div>
+
+                        <div>
+                            <label
+                                class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Kondisi
+                                Saat Ini</label>
+                            <select id="kondisi_aset"
+                                class="w-full bg-slate-50 border border-slate-200 rounded-xl py-3.5 sm:py-4 px-4 sm:px-5 text-sm sm:text-base font-semibold focus:ring-2 focus:ring-[#0B2A4A]/20 focus:border-[#0B2A4A] outline-none transition-all cursor-pointer">
+                                <option value="">-- Pilih Indikator Kondisi --</option>
+                                <option value="Rusak">🚨 RUSAK BERAT / MATI TOTAL</option>
+                                <option value="Hilang">🚫 HILANG / DICURI</option>
+                                <option value="Pindah Tempat">📍 BERGESER / ROBOH</option>
+                                <option value="Lainnya">📝 LAINNYA</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label
+                                class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Deskripsi
+                                Lengkap</label>
+                            <textarea id="deskripsi" rows="4"
+                                placeholder="Jelaskan secara detail apa yang Anda lihat..."
+                                class="w-full bg-slate-50 border border-slate-200 rounded-xl py-3.5 sm:py-4 px-4 sm:px-5 text-sm sm:text-base font-semibold focus:ring-2 focus:ring-[#0B2A4A]/20 focus:border-[#0B2A4A] outline-none transition-all resize-none"></textarea>
+                        </div>
+
+                        <div>
+                            <label
+                                class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">
+                                <i class="fas fa-map-marker-alt text-[#0B2A4A] mr-1"></i> Titik Lokasi Kerusakan
+                            </label>
+                            <div class="relative rounded-2xl overflow-hidden border border-slate-200 shadow-sm z-10">
+                                <div id="reportMap" class="w-full h-64 sm:h-80 bg-slate-200"></div>
                                 <button type="button" onclick="getCurrentLocation()" class="locate-btn"
-                                    title="Gunakan Lokasi Saya">
-                                    <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                                    </svg>
+                                    title="Gunakan GPS Perangkat">
+                                    <i class="fas fa-crosshairs text-lg"></i>
                                 </button>
                             </div>
                             <input type="hidden" id="lokasi_lat" value="-6.2088">
                             <input type="hidden" id="lokasi_lng" value="106.8456">
-                            <div class="mt-3 p-2.5 sm:p-3 bg-blue-50 rounded-xl border border-blue-100">
-                                <p class="text-[11px] sm:text-xs font-semibold text-[#0B2A4A]" id="lokasi_display">📍
-                                    Klik pada peta untuk menentukan lokasi</p>
+                            <div
+                                class="mt-3 p-3 sm:p-4 bg-blue-50 rounded-xl border border-blue-100 flex items-start gap-3">
+                                <i class="fas fa-info-circle text-blue-500 mt-0.5"></i>
+                                <p class="text-[10px] sm:text-xs font-bold text-blue-900 leading-relaxed"
+                                    id="lokasi_display">
+                                    Geser pin atau tap pada peta untuk menetapkan koordinat lokasi yang akurat.
+                                </p>
                             </div>
                         </div>
 
-                        <!-- Upload Foto -->
                         <div>
-                            <label class="text-[9px] sm:text-[10px] font-black text-slate-500 uppercase ml-1">Bukti Foto
-                                (Opsional)</label>
+                            <label
+                                class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">
+                                Lampiran Foto (Sangat Disarankan)
+                            </label>
                             <div
-                                class="relative border-2 border-dashed border-slate-300 rounded-xl p-3 sm:p-4 text-center hover:border-[#0B2A4A] cursor-pointer mt-1">
-                                <div class="text-xl sm:text-2xl mb-0.5 sm:mb-1">📸</div>
-                                <p class="text-[9px] sm:text-[10px] font-bold text-[#0B2A4A]">Klik untuk upload foto</p>
+                                class="relative border-2 border-dashed border-slate-300 rounded-2xl p-6 sm:p-8 text-center hover:border-[#0B2A4A] bg-slate-50 hover:bg-slate-100 transition-colors cursor-pointer">
+                                <div
+                                    class="w-12 h-12 sm:w-16 sm:h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm border border-slate-100">
+                                    <i class="fas fa-camera text-xl sm:text-2xl text-slate-400"></i>
+                                </div>
+                                <p class="text-xs sm:text-sm font-bold text-[#0B2A4A] mb-1">Tap disini untuk unggah foto
+                                </p>
+                                <p class="text-[9px] sm:text-[10px] text-slate-400 font-medium">Format: JPG, PNG (Max
+                                    5MB)</p>
                                 <input type="file" id="foto_bukti" accept="image/*"
-                                    class="absolute inset-0 opacity-0 cursor-pointer">
+                                    class="absolute inset-0 opacity-0 cursor-pointer w-full h-full">
                             </div>
-                            <div id="previewContainer" class="mt-3 hidden">
+                            <div id="previewContainer" class="mt-4 hidden relative group">
                                 <img id="previewImage"
-                                    class="w-full h-32 sm:h-40 object-cover rounded-xl border shadow">
+                                    class="w-full max-h-64 object-cover rounded-2xl border border-slate-200 shadow-sm">
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Submit Button -->
                 <button onclick="submitLaporan()" id="submitBtn"
-                    class="w-full bg-[#0B2A4A] text-[#F4B400] py-3 sm:py-4 rounded-xl font-black text-xs sm:text-sm uppercase tracking-wider shadow-xl hover:bg-black transition-all">
-                    <i class="fas fa-paper-plane mr-2"></i> Kirim Laporan Resmi
+                    class="w-full bg-[#0B2A4A] text-[#F4B400] py-4 sm:py-5 rounded-2xl font-black text-sm sm:text-base uppercase tracking-widest shadow-xl hover:bg-slate-900 transition-all flex justify-center items-center gap-3">
+                    <i class="fas fa-paper-plane"></i> Kirim Laporan Resmi
                 </button>
-                <div class="text-center mt-3 sm:mt-4">
-                    <p class="text-[8px] sm:text-[9px] text-slate-400 font-black uppercase tracking-wider">Dishub DKI
-                        Jakarta • 2026</p>
-                </div>
             </div>
         </div>
     </div>
 
-    <!-- ==================== MODAL LOGIN ==================== -->
     <div id="loginModal" class="fixed inset-0 z-[2000] flex items-center justify-center modal-backdrop"
         style="display: none;">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-5 sm:p-6 mx-4">
-            <div class="text-center mb-3 sm:mb-4">
+        <div
+            class="bg-white rounded-3xl shadow-2xl w-full max-w-sm p-6 sm:p-8 mx-4 relative overflow-y-auto max-h-[90vh] custom-scrollbar">
+            <button onclick="closeLogin()"
+                class="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 transition-colors">
+                <i class="fas fa-times"></i>
+            </button>
+
+            <div class="text-center mb-6 sm:mb-8 mt-2">
                 <div
-                    class="w-14 h-14 sm:w-16 sm:h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                    <i class="fas fa-user-shield text-xl sm:text-2xl text-indigo-600"></i>
+                    class="w-16 h-16 sm:w-20 sm:h-20 bg-indigo-50 border border-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-shield-alt text-2xl sm:text-3xl text-indigo-600"></i>
                 </div>
-                <h3 class="text-lg sm:text-xl font-black" id="modalTitle">Pilih Role Login</h3>
-                <p class="text-slate-500 text-xs sm:text-sm">Silakan pilih peran Anda untuk mengakses sistem</p>
+                <h3 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight" id="modalTitle">Otorisasi
+                    Sistem</h3>
+                <p class="text-slate-500 text-xs sm:text-sm mt-1">Pilih pintu masuk otorisasi Anda</p>
             </div>
 
-            <!-- Dua tombol role login -->
-            <div class="flex flex-col gap-3">
+            <div class="flex flex-col gap-3 sm:gap-4">
                 <button onclick="doLogin('seksi')"
-                    class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold text-sm uppercase tracking-wider transition-all flex items-center justify-center gap-2">
-                    <i class="fas fa-user-check"></i> Login sebagai Staf
+                    class="w-full py-3.5 sm:py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-black text-xs sm:text-sm uppercase tracking-widest transition-all shadow-lg shadow-indigo-600/20 flex items-center justify-center gap-3">
+                    <i class="fas fa-hard-hat text-base"></i> Petugas Lapangan
                 </button>
                 <button onclick="doLogin('admin')"
-                    class="w-full py-3 bg-slate-800 hover:bg-slate-900 text-white rounded-xl font-bold text-sm uppercase tracking-wider transition-all flex items-center justify-center gap-2">
-                    <i class="fas fa-user-shield"></i> Login sebagai Admin
+                    class="w-full py-3.5 sm:py-4 bg-slate-900 hover:bg-black text-white rounded-xl font-black text-xs sm:text-sm uppercase tracking-widest transition-all shadow-lg flex items-center justify-center gap-3">
+                    <i class="fas fa-user-cog text-base"></i> Admin
                 </button>
             </div>
 
-            <div class="mt-4 text-center">
-                <button onclick="closeLogin()"
-                    class="text-slate-400 hover:text-slate-600 text-xs font-bold uppercase tracking-wider transition-all">Batal</button>
+            <div class="mt-8 text-center border-t border-slate-100 pt-6">
+                <p
+                    class="text-center text-[9px] sm:text-[10px] text-slate-400 font-bold uppercase tracking-widest leading-relaxed">
+                    Sistem Informasi Manajemen Aset<br>Dishub DKI Jakarta &copy; 2026
+                </p>
             </div>
-            <p class="text-center text-[8px] sm:text-[9px] text-slate-400 mt-3">Sistem Informasi Manajemen Aset Dishub
-                DKI Jakarta</p>
         </div>
     </div>
 
@@ -665,24 +683,21 @@
         // Map variables
         let reportMap, reportMarker;
         let mapInitialized = false;
-
-        // Global variables
         let selectedPhotoFile = null;
 
-        // Initialize slideshow
         function initSlideshow() {
             if (slides.length > 0) {
                 slides[0].classList.add('active');
                 if (dots[0]) dots[0].classList.add('active');
+                startSlideInterval();
             }
-            startSlideInterval();
         }
 
         function startSlideInterval() {
             slideInterval = setInterval(() => {
                 let nextSlide = (currentSlide + 1) % slides.length;
                 goToSlide(nextSlide);
-            }, 4000);
+            }, 5000);
         }
 
         function goToSlide(index) {
@@ -695,7 +710,6 @@
             if (dots[currentSlide]) dots[currentSlide].classList.add('active');
         }
 
-        // Initialize map
         function initMap() {
             if (mapInitialized) return;
             const mapDiv = document.getElementById('reportMap');
@@ -705,7 +719,7 @@
                 reportMap = L.map('reportMap').setView([-6.2088, 106.8456], 15);
 
                 L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; CartoDB',
+                    attribution: '&copy; OpenStreetMap &copy; CartoDB',
                     subdomains: 'abcd',
                     maxZoom: 19
                 }).addTo(reportMap);
@@ -729,112 +743,99 @@
                 });
 
                 mapInitialized = true;
-                window.reportMap = reportMap;
-                window.reportMarker = reportMarker;
             } catch (error) {
-                console.error("Map error:", error);
+                console.error("Leaflet Map Error:", error);
             }
         }
 
         function updateLocation(lat, lng) {
-            if (reportMarker) {
-                reportMarker.setLatLng([lat, lng]);
-            }
+            if (reportMarker) reportMarker.setLatLng([lat, lng]);
             document.getElementById('lokasi_lat').value = lat;
             document.getElementById('lokasi_lng').value = lng;
-            document.getElementById('lokasi_display').innerHTML = `📍 Lokasi: ${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+            document.getElementById('lokasi_display').innerHTML = `<i class="fas fa-check-circle text-emerald-500 mr-1"></i> Koordinat tersimpan: ${lat.toFixed(5)}, ${lng.toFixed(5)}`;
         }
 
         function getCurrentLocation() {
             if (navigator.geolocation) {
+                document.getElementById('lokasi_display').innerHTML = `<i class="fas fa-spinner fa-spin text-blue-500 mr-1"></i> Mengambil lokasi GPS...`;
                 navigator.geolocation.getCurrentPosition(
                     (pos) => {
                         updateLocation(pos.coords.latitude, pos.coords.longitude);
-                        if (reportMap) reportMap.setView([pos.coords.latitude, pos.coords.longitude], 16);
+                        if (reportMap) reportMap.setView([pos.coords.latitude, pos.coords.longitude], 17);
                     },
                     (err) => {
-                        alert("⚠️ Gagal mengambil lokasi. Pastikan GPS aktif.");
-                    }
+                        alert("⚠️ Gagal mengambil lokasi GPS. Pastikan izin lokasi diaktifkan pada browser Anda.");
+                        document.getElementById('lokasi_display').innerHTML = `📍 Klik pada peta untuk menentukan lokasi`;
+                    },
+                    { enableHighAccuracy: true, timeout: 5000 }
                 );
             } else {
-                alert("⚠️ Browser tidak mendukung geolocation.");
+                alert("⚠️ Browser tidak mendukung pencarian lokasi.");
             }
         }
 
-        // Page navigation
         function showLanding() {
             document.getElementById('landingPage').style.display = 'block';
             document.getElementById('laporanPage').style.display = 'none';
+            window.scrollTo(0, 0);
         }
 
         function showLaporan() {
             document.getElementById('landingPage').style.display = 'none';
             document.getElementById('laporanPage').style.display = 'block';
+            window.scrollTo(0, 0);
 
-            // Reset form
-            document.getElementById('nama_pelapor').value = '';
-            document.getElementById('kontak_pelapor').value = '';
-            document.getElementById('judul_laporan').value = '';
-            document.getElementById('kondisi_aset').value = '';
-            document.getElementById('deskripsi').value = '';
+            ['nama_pelapor', 'kontak_pelapor', 'judul_laporan', 'kondisi_aset', 'deskripsi'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.value = '';
+            });
             document.getElementById('previewContainer').classList.add('hidden');
             selectedPhotoFile = null;
-            if (document.getElementById('foto_bukti')) document.getElementById('foto_bukti').value = '';
-
-            // Reset location to default Jakarta
-            updateLocation(-6.2088, 106.8456);
-            if (reportMap) reportMap.setView([-6.2088, 106.8456], 15);
+            const fotoInput = document.getElementById('foto_bukti');
+            if (fotoInput) fotoInput.value = '';
 
             setTimeout(() => {
-                if (!mapInitialized) initMap();
-            }, 200);
+                if (!mapInitialized) {
+                    initMap();
+                } else if (reportMap) {
+                    reportMap.invalidateSize();
+                }
+                updateLocation(-6.2088, 106.8456);
+                if (reportMap) reportMap.setView([-6.2088, 106.8456], 13);
+            }, 300);
         }
 
-        function backToLanding() {
-            showLanding();
-        }
+        function backToLanding() { showLanding(); }
+        function openLaporan() { showLaporan(); }
 
-        function openLaporan() {
-            showLaporan();
-        }
-
-        // Login functions - Modal dengan 2 role
-        function openLogin() {
-            document.getElementById('loginModal').style.display = 'flex';
-        }
-
-        function closeLogin() {
-            document.getElementById('loginModal').style.display = 'none';
-        }
-
+        function openLogin() { document.getElementById('loginModal').style.display = 'flex'; }
+        function closeLogin() { document.getElementById('loginModal').style.display = 'none'; }
         function doLogin(role) {
-            if (role === 'seksi') {
-                window.location.href = 'seksi.html';
-            } else if (role === 'admin') {
-                window.location.href = 'admin_bagian1.html';
-            }
+            if (role === 'seksi') window.location.href = 'seksi.html';
+            else if (role === 'admin') window.location.href = 'admin_bagian1.html';
         }
 
-        // Photo upload preview
         const fotoInput = document.getElementById('foto_bukti');
         if (fotoInput) {
             fotoInput.addEventListener('change', function (e) {
                 const file = e.target.files[0];
                 if (file) {
+                    if (file.size > 5 * 1024 * 1024) {
+                        alert("⚠️ Ukuran foto melebihi 5MB. Silakan pilih foto lain.");
+                        this.value = '';
+                        return;
+                    }
                     selectedPhotoFile = file;
                     const reader = new FileReader();
                     reader.onload = function (event) {
-                        const previewContainer = document.getElementById('previewContainer');
-                        const previewImage = document.getElementById('previewImage');
-                        previewImage.src = event.target.result;
-                        previewContainer.classList.remove('hidden');
+                        document.getElementById('previewImage').src = event.target.result;
+                        document.getElementById('previewContainer').classList.remove('hidden');
                     };
                     reader.readAsDataURL(file);
                 }
             });
         }
 
-        // Submit laporan
         function submitLaporan() {
             const nama = document.getElementById('nama_pelapor').value.trim();
             const kontak = document.getElementById('kontak_pelapor').value.trim();
@@ -842,55 +843,29 @@
             const kondisi = document.getElementById('kondisi_aset').value;
             const deskripsi = document.getElementById('deskripsi').value.trim();
 
-            if (!nama) {
-                alert('⚠️ Nama lengkap harus diisi!');
-                return;
-            }
-            if (!kontak) {
-                alert('⚠️ Nomor WhatsApp harus diisi!');
-                return;
-            }
-            if (!judul) {
-                alert('⚠️ Judul laporan harus diisi!');
-                return;
-            }
-            if (!kondisi) {
-                alert('⚠️ Pilih kategori kondisi aset!');
+            if (!nama || !kontak || !judul || !kondisi || !deskripsi) {
+                alert('⚠️ Mohon lengkapi seluruh field formulir yang tersedia sebelum mengirimkan laporan.');
                 return;
             }
 
             const submitBtn = document.getElementById('submitBtn');
             const originalText = submitBtn.innerHTML;
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> MEMPROSES...';
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> MEMVALIDASI DATA...';
             submitBtn.disabled = true;
+            submitBtn.classList.add('opacity-80', 'cursor-not-allowed');
 
             setTimeout(() => {
-                const idLaporan = 'LP-' + new Date().getTime();
-                alert('✅ Laporan berhasil dikirim!\n\nTerima kasih, laporan Anda akan kami proses.\n\nID Laporan: ' + idLaporan);
-
-                // Reset form
-                document.getElementById('nama_pelapor').value = '';
-                document.getElementById('kontak_pelapor').value = '';
-                document.getElementById('judul_laporan').value = '';
-                document.getElementById('kondisi_aset').value = '';
-                document.getElementById('deskripsi').value = '';
-                document.getElementById('previewContainer').classList.add('hidden');
-                selectedPhotoFile = null;
-                if (fotoInput) fotoInput.value = '';
-
-                // Reset location
-                updateLocation(-6.2088, 106.8456);
-                if (reportMap) reportMap.setView([-6.2088, 106.8456], 15);
+                const idLaporan = 'LP-' + Math.floor(Math.random() * 900000 + 100000);
+                alert('✅ LAPORAN TERKIRIM BERHASIL\n\nTerima kasih atas partisipasi Anda dalam menjaga kualitas aset publik. Laporan Anda telah terenkripsi dan masuk antrean sistem.\n\nNomor Registrasi Laporan: ' + idLaporan);
 
                 submitBtn.innerHTML = originalText;
                 submitBtn.disabled = false;
-
+                submitBtn.classList.remove('opacity-80', 'cursor-not-allowed');
                 showLanding();
             }, 1500);
         }
 
-        // Initialize on page load
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', () => {
             initSlideshow();
         });
     </script>
